@@ -25,6 +25,14 @@ func SubHandler(c *gin.Context) {
 		return
 	}
 
+	if len(query.Subs) == 1 {
+		userInfoHeader, err := fetchSubscriptionUserInfo(query.Subs[0], "clash")
+		if err != nil {
+			c.String(http.StatusInternalServerError, err.Error())
+		}
+		c.Header("subscription-userinfo", userInfoHeader)
+	}
+
 	if query.NodeListMode {
 		nodelist := model.NodeList{}
 		nodelist.Proxies = sub.Proxies

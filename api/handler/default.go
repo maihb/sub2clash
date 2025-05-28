@@ -233,6 +233,21 @@ func BuildSub(clashType model.ClashType, query validator.SubValidator, template 
 	return temp, nil
 }
 
+func fetchSubscriptionUserInfo(url string, userAgent string) (string, error) {
+	resp, err := common.Head(url, common.WithUserAgent(userAgent))
+	if err != nil {
+		logger.Logger.Debug("创建 HEAD 请求失败", zap.Error(err))
+		return "", err
+	}
+	defer resp.Body.Close()
+	if userInfo := resp.Header.Get("subscription-userinfo"); userInfo != "" {
+		return userInfo, nil
+	}
+
+	logger.Logger.Debug("目标 URL 未返回 subscription-userinfo 头", zap.Error(err))
+	return "", err
+}
+
 func MergeSubAndTemplate(temp *model.Subscription, sub *model.Subscription, igcg bool) {
 
 	var countryGroupNames []string

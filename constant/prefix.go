@@ -10,4 +10,5 @@ const (
 	VLESSPrefix        string = "vless://"
 	VMessPrefix        string = "vmess://"
 	SocksPrefix        string = "socks"
+	AnytlsPrefix       string = "anytls://"
 )

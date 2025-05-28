@@ -27,6 +27,7 @@ func GetSupportProxyTypes(clashType ClashType) map[string]bool {
 			"hysteria":  true,
 			"hysteria2": true,
 			"socks5":    true,
+			"anytls":    true,
 		}
 	}
 	return nil

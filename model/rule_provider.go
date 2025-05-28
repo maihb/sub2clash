@@ -6,6 +6,7 @@ type RuleProvider struct {
 	Url      string `yaml:"url,omitempty"`
 	Path     string `yaml:"path,omitempty"`
 	Interval int    `yaml:"interval,omitempty"`
+	Format string    `yaml:"format,omitempty"`
 }
 
 type Payload struct {

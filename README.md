@@ -18,6 +18,7 @@
   - Hysteria （Clash.Meta）
   - Hysteria2 （Clash.Meta）
   - Socks5
+  - Anytls （Clash.Meta）
 
 ## 使用
 

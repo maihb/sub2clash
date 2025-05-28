@@ -130,6 +130,9 @@ func ParseProxy(proxies ...string) []model.Proxy {
 			if strings.HasPrefix(proxy, constant.SocksPrefix) {
 				proxyItem, err = parser.ParseSocks(proxy)
 			}
+			if strings.HasPrefix(proxy, constant.AnytlsPrefix) {
+				proxyItem, err = parser.ParseAnytls(proxy)
+			}
 			if err == nil {
 				result = append(result, proxyItem)
 			} else {

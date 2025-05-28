@@ -58,3 +58,45 @@ func Get(url string, options ...GetOption) (resp *http.Response, err error) {
 	}
 	return nil, fmt.Errorf("请求失败：%v", err)
 }
+
+func Head(url string, options ...GetOption) (resp *http.Response, err error) {
+	retryTimes := config.Default.RequestRetryTimes
+	haveTried := 0
+	retryDelay := time.Second
+
+	// 解析可选参数（如 User-Agent）
+	getConfig := GetConfig{}
+	for _, option := range options {
+		option(&getConfig)
+	}
+
+	var req *http.Request
+	var headResp *http.Response
+
+	for haveTried < retryTimes {
+		client := &http.Client{}
+		req, err = http.NewRequest("HEAD", url, nil)
+		if err != nil {
+			haveTried++
+			time.Sleep(retryDelay)
+			continue
+		}
+
+		// 设置 User-Agent（如果提供）
+		if getConfig.userAgent != "" {
+			req.Header.Set("User-Agent", getConfig.userAgent)
+		}
+
+		headResp, err = client.Do(req)
+		if err != nil {
+			haveTried++
+			time.Sleep(retryDelay)
+			continue
+		}
+
+		// HEAD 请求不检查 ContentLength，因为没有响应体
+		return headResp, nil
+	}
+
+	return nil, fmt.Errorf("HEAD 请求失败：%v", err)
+}
