@@ -1,90 +1,76 @@
 package config
 
 import (
-	"errors"
-	"os"
-	"strconv"
+	"strings"
 
-	"github.com/joho/godotenv"
+	"github.com/spf13/viper"
 )
 
 type Config struct {
-	Port               int
-	MetaTemplate       string
-	ClashTemplate      string
-	RequestRetryTimes  int
-	RequestMaxFileSize int64
-	CacheExpire        int64
-	LogLevel           string
-	//BasePath           string
-	ShortLinkLength int
+	Address            string `mapstructure:"address"`
+	MetaTemplate       string `mapstructure:"meta_template"`
+	ClashTemplate      string `mapstructure:"clash_template"`
+	RequestRetryTimes  int    `mapstructure:"request_retry_times"`
+	RequestMaxFileSize int64  `mapstructure:"request_max_file_size"`
+	CacheExpire        int64  `mapstructure:"cache_expire"`
+	LogLevel           string `mapstructure:"log_level"`
+	ShortLinkLength    int    `mapstructure:"short_link_length"`
 }
 
-var Default *Config
+var GlobalConfig *Config
 var Dev string
 
 func LoadConfig() error {
-	Default = &Config{
-		MetaTemplate:       "template_meta.yaml",
-		ClashTemplate:      "template_clash.yaml",
-		RequestRetryTimes:  3,
-		RequestMaxFileSize: 1024 * 1024 * 1,
-		Port:               8011,
-		CacheExpire:        60 * 5,
-		LogLevel:           "info",
-		//BasePath:           "/",
-		ShortLinkLength: 6,
-	}
-	_ = godotenv.Load()
-	if os.Getenv("PORT") != "" {
-		atoi, err := strconv.Atoi(os.Getenv("PORT"))
-		if err != nil {
-			return errors.New("PORT invalid")
+	v := viper.New()
+
+	// 添加配置文件搜索路径
+	v.AddConfigPath(".")
+	v.AddConfigPath("./config")
+	v.AddConfigPath("/etc/sub2clash/")
+
+	// 设置默认值
+	setDefaults(v)
+
+	// 设置环境变量前缀和自动绑定
+	v.SetEnvPrefix("SUB2CLASH")
+	v.AutomaticEnv()
+	v.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
+
+	// 尝试按优先级加载不同格式的配置文件
+	configLoaded := false
+	configNames := []string{"config", "sub2clash"}
+	configExts := []string{"yaml", "yml", "json", "toml", "ini"}
+
+	for _, name := range configNames {
+		for _, ext := range configExts {
+			v.SetConfigName(name)
+			v.SetConfigType(ext)
+			if err := v.ReadInConfig(); err == nil {
+				configLoaded = true
+				break
+			}
 		}
-		Default.Port = atoi
-	}
-	if os.Getenv("META_TEMPLATE") != "" {
-		Default.MetaTemplate = os.Getenv("META_TEMPLATE")
-	}
-	if os.Getenv("CLASH_TEMPLATE") != "" {
-		Default.ClashTemplate = os.Getenv("CLASH_TEMPLATE")
-	}
-	if os.Getenv("REQUEST_RETRY_TIMES") != "" {
-		atoi, err := strconv.Atoi(os.Getenv("REQUEST_RETRY_TIMES"))
-		if err != nil {
-			return errors.New("REQUEST_RETRY_TIMES invalid")
+		if configLoaded {
+			break
 		}
-		Default.RequestRetryTimes = atoi
 	}
-	if os.Getenv("REQUEST_MAX_FILE_SIZE") != "" {
-		atoi, err := strconv.Atoi(os.Getenv("REQUEST_MAX_FILE_SIZE"))
-		if err != nil {
-			return errors.New("REQUEST_MAX_FILE_SIZE invalid")
-		}
-		Default.RequestMaxFileSize = int64(atoi)
+
+	// 将配置解析到结构体
+	GlobalConfig = &Config{}
+	if err := v.Unmarshal(GlobalConfig); err != nil {
+		return err
 	}
-	if os.Getenv("CACHE_EXPIRE") != "" {
-		atoi, err := strconv.Atoi(os.Getenv("CACHE_EXPIRE"))
-		if err != nil {
-			return errors.New("CACHE_EXPIRE invalid")
-		}
-		Default.CacheExpire = int64(atoi)
-	}
-	if os.Getenv("LOG_LEVEL") != "" {
-		Default.LogLevel = os.Getenv("LOG_LEVEL")
-	}
-	//if os.Getenv("BASE_PATH") != "" {
-	//	Default.BasePath = os.Getenv("BASE_PATH")
-	//	if Default.BasePath[len(Default.BasePath)-1] != '/' {
-	//		Default.BasePath += "/"
-	//	}
-	//}
-	if os.Getenv("SHORT_LINK_LENGTH") != "" {
-		atoi, err := strconv.Atoi(os.Getenv("SHORT_LINK_LENGTH"))
-		if err != nil {
-			return errors.New("SHORT_LINK_LENGTH invalid")
-		}
-		Default.ShortLinkLength = atoi
-	}
+
 	return nil
+}
+
+func setDefaults(v *viper.Viper) {
+	v.SetDefault("address", "0.0.0.0:8011")
+	v.SetDefault("meta_template", "https://raw.githubusercontent.com/bestnite/sub2clash/refs/heads/main/templates/template_meta.yaml")
+	v.SetDefault("clash_template", "https://raw.githubusercontent.com/bestnite/sub2clash/refs/heads/main/templates/template_clash.yaml")
+	v.SetDefault("request_retry_times", 3)
+	v.SetDefault("request_max_file_size", 1024*1024*1)
+	v.SetDefault("cache_expire", 60*5)
+	v.SetDefault("log_level", "info")
+	v.SetDefault("short_link_length", 6)
 }

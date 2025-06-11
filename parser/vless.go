@@ -5,19 +5,29 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/nitezs/sub2clash/constant"
-	"github.com/nitezs/sub2clash/model"
+	E "github.com/bestnite/sub2clash/error"
+	P "github.com/bestnite/sub2clash/model/proxy"
 )
 
-func ParseVless(proxy string) (model.Proxy, error) {
-	if !strings.HasPrefix(proxy, constant.VLESSPrefix) {
-		return model.Proxy{}, &ParseError{Type: ErrInvalidPrefix, Raw: proxy}
+type VlessParser struct{}
+
+func (p *VlessParser) GetPrefixes() []string {
+	return []string{"vless://"}
+}
+
+func (p *VlessParser) GetType() string {
+	return "vless"
+}
+
+func (p *VlessParser) Parse(proxy string) (P.Proxy, error) {
+	if !hasPrefix(proxy, p.GetPrefixes()) {
+		return P.Proxy{}, &E.ParseError{Type: E.ErrInvalidPrefix, Raw: proxy}
 	}
 
 	link, err := url.Parse(proxy)
 	if err != nil {
-		return model.Proxy{}, &ParseError{
-			Type:    ErrInvalidStruct,
+		return P.Proxy{}, &E.ParseError{
+			Type:    E.ErrInvalidStruct,
 			Message: "url parse error",
 			Raw:     proxy,
 		}
@@ -25,8 +35,8 @@ func ParseVless(proxy string) (model.Proxy, error) {
 
 	server := link.Hostname()
 	if server == "" {
-		return model.Proxy{}, &ParseError{
-			Type:    ErrInvalidStruct,
+		return P.Proxy{}, &E.ParseError{
+			Type:    E.ErrInvalidStruct,
 			Message: "missing server host",
 			Raw:     proxy,
 		}
@@ -34,8 +44,8 @@ func ParseVless(proxy string) (model.Proxy, error) {
 	portStr := link.Port()
 	port, err := ParsePort(portStr)
 	if err != nil {
-		return model.Proxy{}, &ParseError{
-			Type:    ErrInvalidPort,
+		return P.Proxy{}, &E.ParseError{
+			Type:    E.ErrInvalidPort,
 			Message: err.Error(),
 			Raw:     proxy,
 		}
@@ -58,8 +68,8 @@ func ParseVless(proxy string) (model.Proxy, error) {
 	}
 	remarks = strings.TrimSpace(remarks)
 
-	result := model.Proxy{
-		Type:   "vless",
+	result := P.Proxy{
+		Type:   p.GetType(),
 		Server: server,
 		Name:   remarks,
 		Port:   port,
@@ -78,7 +88,7 @@ func ParseVless(proxy string) (model.Proxy, error) {
 	if security == "reality" {
 		result.TLS = true
 		result.Servername = sni
-		result.RealityOpts = model.RealityOptions{
+		result.RealityOpts = P.RealityOptions{
 			PublicKey: pbk,
 			ShortID:   sid,
 		}
@@ -87,7 +97,7 @@ func ParseVless(proxy string) (model.Proxy, error) {
 
 	if _type == "ws" {
 		result.Network = "ws"
-		result.WSOpts = model.WSOptions{
+		result.WSOpts = P.WSOptions{
 			Path: path,
 		}
 		if host != "" {
@@ -98,21 +108,21 @@ func ParseVless(proxy string) (model.Proxy, error) {
 
 	if _type == "grpc" {
 		result.Network = "grpc"
-		result.GrpcOpts = model.GrpcOptions{
+		result.GrpcOpts = P.GrpcOptions{
 			GrpcServiceName: serviceName,
 		}
 	}
 
 	if _type == "http" {
-		result.HTTPOpts = model.HTTPOptions{}
+		result.HTTPOpts = P.HTTPOptions{}
 		result.HTTPOpts.Headers = map[string][]string{}
 
 		result.HTTPOpts.Path = strings.Split(path, ",")
 
 		hosts, err := url.QueryUnescape(host)
 		if err != nil {
-			return model.Proxy{}, &ParseError{
-				Type:    ErrCannotParseParams,
+			return P.Proxy{}, &E.ParseError{
+				Type:    E.ErrCannotParseParams,
 				Raw:     proxy,
 				Message: err.Error(),
 			}
@@ -124,4 +134,8 @@ func ParseVless(proxy string) (model.Proxy, error) {
 	}
 
 	return result, nil
+}
+
+func init() {
+	RegisterParser(&VlessParser{})
 }

@@ -5,19 +5,29 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/nitezs/sub2clash/constant"
-	"github.com/nitezs/sub2clash/model"
+	E "github.com/bestnite/sub2clash/error"
+	P "github.com/bestnite/sub2clash/model/proxy"
 )
 
-func ParseTrojan(proxy string) (model.Proxy, error) {
-	if !strings.HasPrefix(proxy, constant.TrojanPrefix) {
-		return model.Proxy{}, &ParseError{Type: ErrInvalidPrefix, Raw: proxy}
+type TrojanParser struct{}
+
+func (p *TrojanParser) GetPrefixes() []string {
+	return []string{"trojan://"}
+}
+
+func (p *TrojanParser) GetType() string {
+	return "trojan"
+}
+
+func (p *TrojanParser) Parse(proxy string) (P.Proxy, error) {
+	if !hasPrefix(proxy, p.GetPrefixes()) {
+		return P.Proxy{}, &E.ParseError{Type: E.ErrInvalidPrefix, Raw: proxy}
 	}
 
 	link, err := url.Parse(proxy)
 	if err != nil {
-		return model.Proxy{}, &ParseError{
-			Type:    ErrInvalidStruct,
+		return P.Proxy{}, &E.ParseError{
+			Type:    E.ErrInvalidStruct,
 			Message: "url parse error",
 			Raw:     proxy,
 		}
@@ -26,16 +36,16 @@ func ParseTrojan(proxy string) (model.Proxy, error) {
 	password := link.User.Username()
 	server := link.Hostname()
 	if server == "" {
-		return model.Proxy{}, &ParseError{
-			Type:    ErrInvalidStruct,
+		return P.Proxy{}, &E.ParseError{
+			Type:    E.ErrInvalidStruct,
 			Message: "missing server host",
 			Raw:     proxy,
 		}
 	}
 	portStr := link.Port()
 	if portStr == "" {
-		return model.Proxy{}, &ParseError{
-			Type:    ErrInvalidStruct,
+		return P.Proxy{}, &E.ParseError{
+			Type:    E.ErrInvalidStruct,
 			Message: "missing server port",
 			Raw:     proxy,
 		}
@@ -43,8 +53,8 @@ func ParseTrojan(proxy string) (model.Proxy, error) {
 
 	port, err := ParsePort(portStr)
 	if err != nil {
-		return model.Proxy{}, &ParseError{
-			Type:    ErrInvalidPort,
+		return P.Proxy{}, &E.ParseError{
+			Type:    E.ErrInvalidPort,
 			Message: err.Error(),
 			Raw:     proxy,
 		}
@@ -66,8 +76,8 @@ func ParseTrojan(proxy string) (model.Proxy, error) {
 		alpn = nil
 	}
 
-	result := model.Proxy{
-		Type:     "trojan",
+	result := P.Proxy{
+		Type:     p.GetType(),
 		Server:   server,
 		Port:     port,
 		Password: password,
@@ -84,7 +94,7 @@ func ParseTrojan(proxy string) (model.Proxy, error) {
 	if security == "reality" {
 		result.TLS = true
 		result.Sni = sni
-		result.RealityOpts = model.RealityOptions{
+		result.RealityOpts = P.RealityOptions{
 			PublicKey: pbk,
 			ShortID:   sid,
 		}
@@ -93,7 +103,7 @@ func ParseTrojan(proxy string) (model.Proxy, error) {
 
 	if network == "ws" {
 		result.Network = "ws"
-		result.WSOpts = model.WSOptions{
+		result.WSOpts = P.WSOptions{
 			Path: path,
 			Headers: map[string]string{
 				"Host": host,
@@ -102,10 +112,14 @@ func ParseTrojan(proxy string) (model.Proxy, error) {
 	}
 
 	if network == "grpc" {
-		result.GrpcOpts = model.GrpcOptions{
+		result.GrpcOpts = P.GrpcOptions{
 			GrpcServiceName: serviceName,
 		}
 	}
 
 	return result, nil
+}
+
+func init() {
+	RegisterParser(&TrojanParser{})
 }

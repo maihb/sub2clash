@@ -3,23 +3,16 @@ package main
 import (
 	_ "embed"
 	"io"
-	"strconv"
 
-	"github.com/nitezs/sub2clash/api"
-	"github.com/nitezs/sub2clash/common"
-	"github.com/nitezs/sub2clash/common/database"
-	"github.com/nitezs/sub2clash/config"
-	"github.com/nitezs/sub2clash/logger"
+	"github.com/bestnite/sub2clash/common"
+	"github.com/bestnite/sub2clash/common/database"
+	"github.com/bestnite/sub2clash/config"
+	"github.com/bestnite/sub2clash/logger"
+	"github.com/bestnite/sub2clash/server"
 
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 )
-
-//go:embed templates/template_meta.yaml
-var templateMeta string
-
-//go:embed templates/template_clash.yaml
-var templateClash string
 
 func init() {
 	var err error
@@ -31,14 +24,9 @@ func init() {
 
 	err = config.LoadConfig()
 
-	logger.InitLogger(config.Default.LogLevel)
+	logger.InitLogger(config.GlobalConfig.LogLevel)
 	if err != nil {
 		logger.Logger.Panic("load config failed", zap.Error(err))
-	}
-
-	err = common.WriteDefalutTemplate(templateMeta, templateClash)
-	if err != nil {
-		logger.Logger.Panic("write default template failed", zap.Error(err))
 	}
 
 	err = database.ConnectDB()
@@ -49,16 +37,15 @@ func init() {
 }
 
 func main() {
-
 	gin.SetMode(gin.ReleaseMode)
 
 	gin.DefaultWriter = io.Discard
 
 	r := gin.Default()
 
-	api.SetRoute(r)
-	logger.Logger.Info("server is running at http://localhost:" + strconv.Itoa(config.Default.Port))
-	err := r.Run(":" + strconv.Itoa(config.Default.Port))
+	server.SetRoute(r)
+	logger.Logger.Info("server is running at " + config.GlobalConfig.Address)
+	err := r.Run(config.GlobalConfig.Address)
 	if err != nil {
 		logger.Logger.Error("server running failed", zap.Error(err))
 		return

@@ -17,6 +17,7 @@ func GetSupportProxyTypes(clashType ClashType) map[string]bool {
 			"socks5": true,
 		}
 	}
+
 	if clashType == ClashMeta {
 		return map[string]bool{
 			"ss":        true,
@@ -30,5 +31,6 @@ func GetSupportProxyTypes(clashType ClashType) map[string]bool {
 			"anytls":    true,
 		}
 	}
+
 	return nil
 }

@@ -3,12 +3,8 @@ package common
 import (
 	"strings"
 
-	"github.com/nitezs/sub2clash/constant"
-	"github.com/nitezs/sub2clash/logger"
-	"github.com/nitezs/sub2clash/model"
-	"github.com/nitezs/sub2clash/parser"
-
-	"go.uber.org/zap"
+	"github.com/bestnite/sub2clash/model"
+	"github.com/bestnite/sub2clash/model/proxy"
 )
 
 func GetContryName(countryKey string) string {
@@ -52,7 +48,7 @@ func GetContryName(countryKey string) string {
 
 func AddProxy(
 	sub *model.Subscription, autotest bool,
-	lazy bool, clashType model.ClashType, proxies ...model.Proxy,
+	lazy bool, clashType model.ClashType, proxies ...proxy.Proxy,
 ) {
 	proxyTypes := model.GetSupportProxyTypes(clashType)
 
@@ -97,50 +93,4 @@ func AddProxy(
 			sub.ProxyGroups = append(sub.ProxyGroups, newGroup)
 		}
 	}
-}
-
-func ParseProxy(proxies ...string) []model.Proxy {
-	var result []model.Proxy
-	for _, proxy := range proxies {
-		if proxy != "" {
-			var proxyItem model.Proxy
-			var err error
-
-			if strings.HasPrefix(proxy, constant.ShadowsocksPrefix) {
-				proxyItem, err = parser.ParseShadowsocks(proxy)
-			}
-			if strings.HasPrefix(proxy, constant.TrojanPrefix) {
-				proxyItem, err = parser.ParseTrojan(proxy)
-			}
-			if strings.HasPrefix(proxy, constant.VMessPrefix) {
-				proxyItem, err = parser.ParseVmess(proxy)
-			}
-			if strings.HasPrefix(proxy, constant.VLESSPrefix) {
-				proxyItem, err = parser.ParseVless(proxy)
-			}
-			if strings.HasPrefix(proxy, constant.ShadowsocksRPrefix) {
-				proxyItem, err = parser.ParseShadowsocksR(proxy)
-			}
-			if strings.HasPrefix(proxy, constant.Hysteria2Prefix1) || strings.HasPrefix(proxy, constant.Hysteria2Prefix2) {
-				proxyItem, err = parser.ParseHysteria2(proxy)
-			}
-			if strings.HasPrefix(proxy, constant.HysteriaPrefix) {
-				proxyItem, err = parser.ParseHysteria(proxy)
-			}
-			if strings.HasPrefix(proxy, constant.SocksPrefix) {
-				proxyItem, err = parser.ParseSocks(proxy)
-			}
-			if strings.HasPrefix(proxy, constant.AnytlsPrefix) {
-				proxyItem, err = parser.ParseAnytls(proxy)
-			}
-			if err == nil {
-				result = append(result, proxyItem)
-			} else {
-				logger.Logger.Debug(
-					"parse proxy failed", zap.String("proxy", proxy), zap.Error(err),
-				)
-			}
-		}
-	}
-	return result
 }

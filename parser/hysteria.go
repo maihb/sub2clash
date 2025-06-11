@@ -6,27 +6,37 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/nitezs/sub2clash/constant"
-	"github.com/nitezs/sub2clash/model"
+	E "github.com/bestnite/sub2clash/error"
+	P "github.com/bestnite/sub2clash/model/proxy"
 )
 
-func ParseHysteria(proxy string) (model.Proxy, error) {
-	if !strings.HasPrefix(proxy, constant.HysteriaPrefix) {
-		return model.Proxy{}, &ParseError{Type: ErrInvalidPrefix, Raw: proxy}
+type HysteriaParser struct{}
+
+func (p *HysteriaParser) GetPrefixes() []string {
+	return []string{"hysteria://"}
+}
+
+func (p *HysteriaParser) GetType() string {
+	return "hysteria"
+}
+
+func (p *HysteriaParser) Parse(proxy string) (P.Proxy, error) {
+	if !hasPrefix(proxy, p.GetPrefixes()) {
+		return P.Proxy{}, &E.ParseError{Type: E.ErrInvalidPrefix, Raw: proxy}
 	}
 
 	link, err := url.Parse(proxy)
 	if err != nil {
-		return model.Proxy{}, &ParseError{
-			Type:    ErrInvalidStruct,
+		return P.Proxy{}, &E.ParseError{
+			Type:    E.ErrInvalidStruct,
 			Message: "url parse error",
 			Raw:     proxy,
 		}
 	}
 	server := link.Hostname()
 	if server == "" {
-		return model.Proxy{}, &ParseError{
-			Type:    ErrInvalidStruct,
+		return P.Proxy{}, &E.ParseError{
+			Type:    E.ErrInvalidStruct,
 			Message: "missing server host",
 			Raw:     proxy,
 		}
@@ -34,8 +44,8 @@ func ParseHysteria(proxy string) (model.Proxy, error) {
 
 	portStr := link.Port()
 	if portStr == "" {
-		return model.Proxy{}, &ParseError{
-			Type:    ErrInvalidStruct,
+		return P.Proxy{}, &E.ParseError{
+			Type:    E.ErrInvalidStruct,
 			Message: "missing server port",
 			Raw:     proxy,
 		}
@@ -43,8 +53,8 @@ func ParseHysteria(proxy string) (model.Proxy, error) {
 
 	port, err := ParsePort(portStr)
 	if err != nil {
-		return model.Proxy{}, &ParseError{
-			Type:    ErrInvalidPort,
+		return P.Proxy{}, &E.ParseError{
+			Type:    E.ErrInvalidPort,
 			Message: err.Error(),
 			Raw:     proxy,
 		}
@@ -70,8 +80,8 @@ func ParseHysteria(proxy string) (model.Proxy, error) {
 	}
 	remarks = strings.TrimSpace(remarks)
 
-	result := model.Proxy{
-		Type:           "hysteria",
+	result := P.Proxy{
+		Type:           p.GetType(),
 		Name:           remarks,
 		Server:         server,
 		Port:           port,
@@ -85,4 +95,8 @@ func ParseHysteria(proxy string) (model.Proxy, error) {
 		AllowInsecure:  insecureBool,
 	}
 	return result, nil
+}
+
+func init() {
+	RegisterParser(&HysteriaParser{})
 }

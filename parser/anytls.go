@@ -5,19 +5,29 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/nitezs/sub2clash/constant"
-	"github.com/nitezs/sub2clash/model"
+	E "github.com/bestnite/sub2clash/error"
+	P "github.com/bestnite/sub2clash/model/proxy"
 )
 
-func ParseAnytls(proxy string) (model.Proxy, error) {
-	if !strings.HasPrefix(proxy, constant.AnytlsPrefix) {
-		return model.Proxy{}, &ParseError{Type: ErrInvalidPrefix, Raw: proxy}
+type AnytlsParser struct{}
+
+func (p *AnytlsParser) GetPrefixes() []string {
+	return []string{"anytls://"}
+}
+
+func (p *AnytlsParser) GetType() string {
+	return "anytls"
+}
+
+func (p *AnytlsParser) Parse(proxy string) (P.Proxy, error) {
+	if !hasPrefix(proxy, p.GetPrefixes()) {
+		return P.Proxy{}, &E.ParseError{Type: E.ErrInvalidPrefix, Raw: proxy}
 	}
 
 	link, err := url.Parse(proxy)
 	if err != nil {
-		return model.Proxy{}, &ParseError{
-			Type:    ErrInvalidStruct,
+		return P.Proxy{}, &E.ParseError{
+			Type:    E.ErrInvalidStruct,
 			Message: "url parse error",
 			Raw:     proxy,
 		}
@@ -32,24 +42,24 @@ func ParseAnytls(proxy string) (model.Proxy, error) {
 	query := link.Query()
 	server := link.Hostname()
 	if server == "" {
-		return model.Proxy{}, &ParseError{
-			Type:    ErrInvalidStruct,
+		return P.Proxy{}, &E.ParseError{
+			Type:    E.ErrInvalidStruct,
 			Message: "missing server host",
 			Raw:     proxy,
 		}
 	}
 	portStr := link.Port()
 	if portStr == "" {
-		return model.Proxy{}, &ParseError{
-			Type:    ErrInvalidStruct,
+		return P.Proxy{}, &E.ParseError{
+			Type:    E.ErrInvalidStruct,
 			Message: "missing server port",
 			Raw:     proxy,
 		}
 	}
 	port, err := ParsePort(portStr)
 	if err != nil {
-		return model.Proxy{}, &ParseError{
-			Type: ErrInvalidPort,
+		return P.Proxy{}, &E.ParseError{
+			Type: E.ErrInvalidPort,
 			Raw:  portStr,
 		}
 	}
@@ -61,8 +71,8 @@ func ParseAnytls(proxy string) (model.Proxy, error) {
 	}
 	remarks = strings.TrimSpace(remarks)
 
-	result := model.Proxy{
-		Type:           "anytls",
+	result := P.Proxy{
+		Type:           p.GetType(),
 		Name:           remarks,
 		Server:         server,
 		Port:           port,
@@ -71,4 +81,8 @@ func ParseAnytls(proxy string) (model.Proxy, error) {
 		SkipCertVerify: insecureBool,
 	}
 	return result, nil
+}
+
+func init() {
+	RegisterParser(&AnytlsParser{})
 }

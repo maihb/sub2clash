@@ -2,44 +2,56 @@ package parser
 
 import (
 	"fmt"
-	"github.com/nitezs/sub2clash/constant"
-	"github.com/nitezs/sub2clash/model"
 	"net/url"
 	"strings"
+
+	E "github.com/bestnite/sub2clash/error"
+	P "github.com/bestnite/sub2clash/model/proxy"
 )
 
-func ParseSocks(proxy string) (model.Proxy, error) {
-	if !strings.HasPrefix(proxy, constant.SocksPrefix) {
-		return model.Proxy{}, &ParseError{Type: ErrInvalidPrefix, Raw: proxy}
+type SocksParser struct{}
+
+func (p *SocksParser) GetPrefixes() []string {
+	return []string{"socks://"}
+}
+
+func (p *SocksParser) GetType() string {
+	return "socks5"
+}
+
+func (p *SocksParser) Parse(proxy string) (P.Proxy, error) {
+	if !hasPrefix(proxy, p.GetPrefixes()) {
+		return P.Proxy{}, &E.ParseError{Type: E.ErrInvalidPrefix, Raw: proxy}
 	}
+
 	link, err := url.Parse(proxy)
 	if err != nil {
-		return model.Proxy{}, &ParseError{
-			Type:    ErrInvalidStruct,
+		return P.Proxy{}, &E.ParseError{
+			Type:    E.ErrInvalidStruct,
 			Message: "url parse error",
 			Raw:     proxy,
 		}
 	}
 	server := link.Hostname()
 	if server == "" {
-		return model.Proxy{}, &ParseError{
-			Type:    ErrInvalidStruct,
+		return P.Proxy{}, &E.ParseError{
+			Type:    E.ErrInvalidStruct,
 			Message: "missing server host",
 			Raw:     proxy,
 		}
 	}
 	portStr := link.Port()
 	if portStr == "" {
-		return model.Proxy{}, &ParseError{
-			Type:    ErrInvalidStruct,
+		return P.Proxy{}, &E.ParseError{
+			Type:    E.ErrInvalidStruct,
 			Message: "missing server port",
 			Raw:     proxy,
 		}
 	}
 	port, err := ParsePort(portStr)
 	if err != nil {
-		return model.Proxy{}, &ParseError{
-			Type: ErrInvalidPort,
+		return P.Proxy{}, &E.ParseError{
+			Type: E.ErrInvalidPort,
 			Raw:  portStr,
 		}
 	}
@@ -56,8 +68,8 @@ func ParseSocks(proxy string) (model.Proxy, error) {
 		decodeStr, err := DecodeBase64(encodeStr)
 		splitStr := strings.Split(decodeStr, ":")
 		if err != nil {
-			return model.Proxy{}, &ParseError{
-				Type:    ErrInvalidStruct,
+			return P.Proxy{}, &E.ParseError{
+				Type:    E.ErrInvalidStruct,
 				Message: "url parse error",
 				Raw:     proxy,
 			}
@@ -67,8 +79,8 @@ func ParseSocks(proxy string) (model.Proxy, error) {
 			password = splitStr[1]
 		}
 	}
-	return model.Proxy{
-		Type:     "socks5",
+	return P.Proxy{
+		Type:     p.GetType(),
 		Name:     remarks,
 		Server:   server,
 		Port:     port,
@@ -76,4 +88,8 @@ func ParseSocks(proxy string) (model.Proxy, error) {
 		Password: password,
 	}, nil
 
+}
+
+func init() {
+	RegisterParser(&SocksParser{})
 }

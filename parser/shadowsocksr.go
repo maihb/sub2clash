@@ -5,20 +5,36 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/nitezs/sub2clash/constant"
-	"github.com/nitezs/sub2clash/model"
+	E "github.com/bestnite/sub2clash/error"
+	P "github.com/bestnite/sub2clash/model/proxy"
 )
 
-func ParseShadowsocksR(proxy string) (model.Proxy, error) {
-	if !strings.HasPrefix(proxy, constant.ShadowsocksRPrefix) {
-		return model.Proxy{}, &ParseError{Type: ErrInvalidPrefix, Raw: proxy}
+type ShadowsocksRParser struct{}
+
+func (p *ShadowsocksRParser) GetPrefixes() []string {
+	return []string{"ssr://"}
+}
+
+func (p *ShadowsocksRParser) GetType() string {
+	return "ssr"
+}
+
+func (p *ShadowsocksRParser) Parse(proxy string) (P.Proxy, error) {
+	if !hasPrefix(proxy, p.GetPrefixes()) {
+		return P.Proxy{}, &E.ParseError{Type: E.ErrInvalidPrefix, Raw: proxy}
 	}
 
-	proxy = strings.TrimPrefix(proxy, constant.ShadowsocksRPrefix)
+	for _, prefix := range p.GetPrefixes() {
+		if strings.HasPrefix(proxy, prefix) {
+			proxy = strings.TrimPrefix(proxy, prefix)
+			break
+		}
+	}
+
 	proxy, err := DecodeBase64(proxy)
 	if err != nil {
-		return model.Proxy{}, &ParseError{
-			Type: ErrInvalidBase64,
+		return P.Proxy{}, &E.ParseError{
+			Type: E.ErrInvalidBase64,
 			Raw:  proxy,
 		}
 	}
@@ -30,16 +46,16 @@ func ParseShadowsocksR(proxy string) (model.Proxy, error) {
 	obfs := parts[4]
 	password, err := DecodeBase64(parts[5])
 	if err != nil {
-		return model.Proxy{}, &ParseError{
-			Type:    ErrInvalidStruct,
+		return P.Proxy{}, &E.ParseError{
+			Type:    E.ErrInvalidStruct,
 			Raw:     proxy,
 			Message: err.Error(),
 		}
 	}
 	port, err := ParsePort(parts[1])
 	if err != nil {
-		return model.Proxy{}, &ParseError{
-			Type:    ErrInvalidPort,
+		return P.Proxy{}, &E.ParseError{
+			Type:    E.ErrInvalidPort,
 			Message: err.Error(),
 			Raw:     proxy,
 		}
@@ -51,8 +67,8 @@ func ParseShadowsocksR(proxy string) (model.Proxy, error) {
 	if len(serverInfoAndParams) == 2 {
 		params, err := url.ParseQuery(serverInfoAndParams[1])
 		if err != nil {
-			return model.Proxy{}, &ParseError{
-				Type:    ErrCannotParseParams,
+			return P.Proxy{}, &E.ParseError{
+				Type:    E.ErrCannotParseParams,
 				Raw:     proxy,
 				Message: err.Error(),
 			}
@@ -69,17 +85,17 @@ func ParseShadowsocksR(proxy string) (model.Proxy, error) {
 			remarks = server + ":" + strconv.Itoa(port)
 		}
 		if err != nil {
-			return model.Proxy{}, &ParseError{
-				Type:    ErrInvalidStruct,
+			return P.Proxy{}, &E.ParseError{
+				Type:    E.ErrInvalidStruct,
 				Raw:     proxy,
 				Message: err.Error(),
 			}
 		}
 	}
 
-	result := model.Proxy{
+	result := P.Proxy{
 		Name:          remarks,
-		Type:          "ssr",
+		Type:          p.GetType(),
 		Server:        server,
 		Port:          port,
 		Protocol:      protocol,
@@ -91,4 +107,8 @@ func ParseShadowsocksR(proxy string) (model.Proxy, error) {
 	}
 
 	return result, nil
+}
+
+func init() {
+	RegisterParser(&ShadowsocksRParser{})
 }

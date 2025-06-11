@@ -5,20 +5,41 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/nitezs/sub2clash/constant"
-	"github.com/nitezs/sub2clash/model"
+	E "github.com/bestnite/sub2clash/error"
+	P "github.com/bestnite/sub2clash/model/proxy"
 )
 
-func ParseShadowsocks(proxy string) (model.Proxy, error) {
-	if !strings.HasPrefix(proxy, constant.ShadowsocksPrefix) {
-		return model.Proxy{}, &ParseError{Type: ErrInvalidPrefix, Raw: proxy}
+// ShadowsocksParser Shadowsocks协议解析器
+type ShadowsocksParser struct{}
+
+// GetPrefixes 返回支持的协议前缀
+func (p *ShadowsocksParser) GetPrefixes() []string {
+	return []string{"ss://"}
+}
+
+// GetType 返回协议类型
+func (p *ShadowsocksParser) GetType() string {
+	return "ss"
+}
+
+// Parse 解析Shadowsocks代理
+func (p *ShadowsocksParser) Parse(proxy string) (P.Proxy, error) {
+	if !hasPrefix(proxy, p.GetPrefixes()) {
+		return P.Proxy{}, &E.ParseError{Type: E.ErrInvalidPrefix, Raw: proxy}
 	}
+
 	if !strings.Contains(proxy, "@") {
 		s := strings.SplitN(proxy, "#", 2)
-		d, err := DecodeBase64(strings.TrimPrefix(s[0], "ss://"))
+		for _, prefix := range p.GetPrefixes() {
+			if strings.HasPrefix(s[0], prefix) {
+				s[0] = strings.TrimPrefix(s[0], prefix)
+				break
+			}
+		}
+		d, err := DecodeBase64(s[0])
 		if err != nil {
-			return model.Proxy{}, &ParseError{
-				Type:    ErrInvalidStruct,
+			return P.Proxy{}, &E.ParseError{
+				Type:    E.ErrInvalidStruct,
 				Message: "url parse error",
 				Raw:     proxy,
 			}
@@ -31,8 +52,8 @@ func ParseShadowsocks(proxy string) (model.Proxy, error) {
 	}
 	link, err := url.Parse(proxy)
 	if err != nil {
-		return model.Proxy{}, &ParseError{
-			Type:    ErrInvalidStruct,
+		return P.Proxy{}, &E.ParseError{
+			Type:    E.ErrInvalidStruct,
 			Message: "url parse error",
 			Raw:     proxy,
 		}
@@ -40,8 +61,8 @@ func ParseShadowsocks(proxy string) (model.Proxy, error) {
 
 	server := link.Hostname()
 	if server == "" {
-		return model.Proxy{}, &ParseError{
-			Type:    ErrInvalidStruct,
+		return P.Proxy{}, &E.ParseError{
+			Type:    E.ErrInvalidStruct,
 			Message: "missing server host",
 			Raw:     proxy,
 		}
@@ -49,16 +70,16 @@ func ParseShadowsocks(proxy string) (model.Proxy, error) {
 
 	portStr := link.Port()
 	if portStr == "" {
-		return model.Proxy{}, &ParseError{
-			Type:    ErrInvalidStruct,
+		return P.Proxy{}, &E.ParseError{
+			Type:    E.ErrInvalidStruct,
 			Message: "missing server port",
 			Raw:     proxy,
 		}
 	}
 	port, err := ParsePort(portStr)
 	if err != nil {
-		return model.Proxy{}, &ParseError{
-			Type: ErrInvalidStruct,
+		return P.Proxy{}, &E.ParseError{
+			Type: E.ErrInvalidStruct,
 			Raw:  proxy,
 		}
 	}
@@ -79,8 +100,8 @@ func ParseShadowsocks(proxy string) (model.Proxy, error) {
 	if isLikelyBase64(password) {
 		password, err = DecodeBase64(password)
 		if err != nil {
-			return model.Proxy{}, &ParseError{
-				Type:    ErrInvalidStruct,
+			return P.Proxy{}, &E.ParseError{
+				Type:    E.ErrInvalidStruct,
 				Message: "password decode error",
 				Raw:     proxy,
 			}
@@ -93,8 +114,8 @@ func ParseShadowsocks(proxy string) (model.Proxy, error) {
 	}
 	remarks = strings.TrimSpace(remarks)
 
-	result := model.Proxy{
-		Type:     "ss",
+	result := P.Proxy{
+		Type:     p.GetType(),
 		Cipher:   method,
 		Password: password,
 		Server:   server,
@@ -105,16 +126,7 @@ func ParseShadowsocks(proxy string) (model.Proxy, error) {
 	return result, nil
 }
 
-func isLikelyBase64(s string) bool {
-	if len(s)%4 == 0 && strings.HasSuffix(s, "=") && !strings.Contains(strings.TrimSuffix(s, "="), "=") {
-		s = strings.TrimSuffix(s, "=")
-		chars := "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
-		for _, c := range s {
-			if !strings.ContainsRune(chars, c) {
-				return false
-			}
-		}
-		return true
-	}
-	return false
+// 注册解析器
+func init() {
+	RegisterParser(&ShadowsocksParser{})
 }

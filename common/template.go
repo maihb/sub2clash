@@ -4,13 +4,11 @@ import (
 	"errors"
 	"io"
 	"os"
-	"path/filepath"
 )
 
-func LoadTemplate(template string) ([]byte, error) {
-	tPath := filepath.Join("templates", template)
-	if _, err := os.Stat(tPath); err == nil {
-		file, err := os.Open(tPath)
+func LoadTemplate(templatePath string) ([]byte, error) {
+	if _, err := os.Stat(templatePath); err == nil {
+		file, err := os.Open(templatePath)
 		if err != nil {
 			return nil, err
 		}

@@ -20,9 +20,6 @@ func MkEssentialDir() error {
 	if err := MKDir("subs"); err != nil {
 		return errors.New("create subs dir failed" + err.Error())
 	}
-	if err := MKDir("templates"); err != nil {
-		return errors.New("create templates dir failed" + err.Error())
-	}
 	if err := MKDir("logs"); err != nil {
 		return errors.New("create logs dir failed" + err.Error())
 	}

@@ -1,0 +1,10 @@
+{
+    "port": 8011,
+    "meta_template": "https://raw.githubusercontent.com/bestnite/sub2clash/refs/heads/main/templates/template_meta.yaml",
+    "clash_template": "https://raw.githubusercontent.com/bestnite/sub2clash/refs/heads/main/templates/template_clash.yaml",
+    "request_retry_times": 3,
+    "request_max_file_size": 1048576,
+    "cache_expire": 300,
+    "log_level": "info",
+    "short_link_length": 6
+}
