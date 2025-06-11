@@ -31,15 +31,11 @@
 
 支持多种配置方式，按优先级排序：
 
-1. **配置文件**：支持多种格式（YAML、JSON、TOML、INI），按以下优先级搜索：
+1. **配置文件**：支持多种格式（YAML、JSON），按以下优先级搜索：
    - `config.yaml` / `config.yml`
    - `config.json`
-   - `config.toml`
-   - `config.ini`
    - `sub2clash.yaml` / `sub2clash.yml`
    - `sub2clash.json`
-   - `sub2clash.toml`
-   - `sub2clash.ini`
 2. **环境变量**：使用 `SUB2CLASH_` 前缀，例如 `SUB2CLASH_ADDRESS=0.0.0.0:8011`
 3. **默认值**：内置默认配置
 
@@ -78,3 +74,12 @@
 
 - [Clash](./templates/template_clash.yaml)
 - [Clash.Meta](./templates/template_meta.yaml)
+
+## 开发
+
+### 添加新协议支持
+
+添加新协议支持需要实现以下组件：
+
+1. 在 `parser` 目录下实现协议解析器，用于解析订阅链接
+2. 在 `model/proxy` 目录下定义协议结构体和对应的序列化器，如有新增属性需在 `model/proxy/proxy.go` 中声明

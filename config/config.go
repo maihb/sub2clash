@@ -39,7 +39,7 @@ func LoadConfig() error {
 	// 尝试按优先级加载不同格式的配置文件
 	configLoaded := false
 	configNames := []string{"config", "sub2clash"}
-	configExts := []string{"yaml", "yml", "json", "toml", "ini"}
+	configExts := []string{"yaml", "yml", "json"}
 
 	for _, name := range configNames {
 		for _, ext := range configExts {
