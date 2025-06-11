@@ -1,12 +1,11 @@
 name: sub2clash
 services:
     sub2clash:
-        container_name: sub2clash
         restart: unless-stopped
         image: nite07/sub2clash:latest
         ports:
             - "8011:8011"
         volumes:
-            - ./logs:/app/logs
-            - ./templates:/app/templates
+            # - ./logs:/app/logs
+            # - ./templates:/app/templates
             - ./data:/app/data

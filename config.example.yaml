@@ -2,7 +2,7 @@
 # 复制此文件为 config.yaml 并根据需要修改配置
 
 # 服务端口
-port: 8011
+address: "0.0.0.0:8011"
 
 # 模板配置
 meta_template: "https://raw.githubusercontent.com/bestnite/sub2clash/refs/heads/main/templates/template_meta.yaml"
