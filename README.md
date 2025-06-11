@@ -1,7 +1,7 @@
 # sub2clash
 
 将订阅链接转换为 Clash、Clash.Meta 配置  
-[预览](https://www.nite07.com/sub)
+[预览](https://clash.nite07.com/)
 
 ## 特性
 
@@ -24,7 +24,7 @@
 
 ### 部署
 
-- [docker compose](./docker-compose.yml)
+- [docker compose](./compose.yml)
 - 运行[二进制文件](https://github.com/bestnite/sub2clash/releases/latest)
 
 ### 配置
@@ -40,19 +40,19 @@
    - `sub2clash.json`
    - `sub2clash.toml`
    - `sub2clash.ini`
-2. **环境变量**：使用 `SUB2CLASH_` 前缀，例如 `SUB2CLASH_PORT=8080`
+2. **环境变量**：使用 `SUB2CLASH_` 前缀，例如 `SUB2CLASH_ADDRESS=0.0.0.0:8011`
 3. **默认值**：内置默认配置
 
-| 配置项                | 环境变量                        | 说明                                    | 默认值         |
-| --------------------- | ------------------------------- | --------------------------------------- | -------------- |
-| port                  | SUB2CLASH_PORT                  | 服务端口                                | `8011`         |
-| meta_template         | SUB2CLASH_META_TEMPLATE         | 默认 meta 模板 URL                      | [默认模板链接] |
-| clash_template        | SUB2CLASH_CLASH_TEMPLATE        | 默认 clash 模板 URL                     | [默认模板链接] |
-| request_retry_times   | SUB2CLASH_REQUEST_RETRY_TIMES   | 请求重试次数                            | `3`            |
-| request_max_file_size | SUB2CLASH_REQUEST_MAX_FILE_SIZE | 请求文件最大大小（byte）                | `1048576`      |
-| cache_expire          | SUB2CLASH_CACHE_EXPIRE          | 订阅缓存时间（秒）                      | `300`          |
-| log_level             | SUB2CLASH_LOG_LEVEL             | 日志等级：`debug`,`info`,`warn`,`error` | `info`         |
-| short_link_length     | SUB2CLASH_SHORT_LINK_LENGTH     | 短链长度                                | `6`            |
+| 配置项                | 环境变量                        | 说明                                    | 默认值                                                                                               |
+| --------------------- | ------------------------------- | --------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| address               | SUB2CLASH_ADDRESS               | 服务监听地址                            | `0.0.0.0:8011`                                                                                       |
+| meta_template         | SUB2CLASH_META_TEMPLATE         | 默认 meta 模板 URL                      | `https://raw.githubusercontent.com/bestnite/sub2clash/refs/heads/main/templates/template_meta.yaml`  |
+| clash_template        | SUB2CLASH_CLASH_TEMPLATE        | 默认 clash 模板 URL                     | `https://raw.githubusercontent.com/bestnite/sub2clash/refs/heads/main/templates/template_clash.yaml` |
+| request_retry_times   | SUB2CLASH_REQUEST_RETRY_TIMES   | 请求重试次数                            | `3`                                                                                                  |
+| request_max_file_size | SUB2CLASH_REQUEST_MAX_FILE_SIZE | 请求文件最大大小（byte）                | `1048576`                                                                                            |
+| cache_expire          | SUB2CLASH_CACHE_EXPIRE          | 订阅缓存时间（秒）                      | `300`                                                                                                |
+| log_level             | SUB2CLASH_LOG_LEVEL             | 日志等级：`debug`,`info`,`warn`,`error` | `info`                                                                                               |
+| short_link_length     | SUB2CLASH_SHORT_LINK_LENGTH     | 短链长度                                | `6`                                                                                                  |
 
 #### 配置文件示例
 
@@ -60,48 +60,6 @@
 
 - [config.example.yaml](./config.example.yaml) - YAML 格式
 - [config.example.json](./config.example.json) - JSON 格式
-- [config.example.toml](./config.example.toml) - TOML 格式
-
-**YAML 格式** (`config.yaml`):
-
-```yaml
-port: 8011
-meta_template: "https://example.com/meta.yaml"
-clash_template: "https://example.com/clash.yaml"
-request_retry_times: 5
-request_max_file_size: 2097152 # 2MB
-cache_expire: 600 # 10 minutes
-log_level: "debug"
-short_link_length: 8
-```
-
-**JSON 格式** (`config.json`):
-
-```json
-{
-  "port": 8011,
-  "meta_template": "https://example.com/meta.yaml",
-  "clash_template": "https://example.com/clash.yaml",
-  "request_retry_times": 5,
-  "request_max_file_size": 2097152,
-  "cache_expire": 600,
-  "log_level": "debug",
-  "short_link_length": 8
-}
-```
-
-**TOML 格式** (`config.toml`):
-
-```toml
-port = 8011
-meta_template = "https://example.com/meta.yaml"
-clash_template = "https://example.com/clash.yaml"
-request_retry_times = 5
-request_max_file_size = 2097152
-cache_expire = 600
-log_level = "debug"
-short_link_length = 8
-```
 
 ### API
 
