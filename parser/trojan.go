@@ -11,6 +11,14 @@ import (
 
 type TrojanParser struct{}
 
+func (p *TrojanParser) SupportClash() bool {
+	return true
+}
+
+func (p *TrojanParser) SupportMeta() bool {
+	return true
+}
+
 func (p *TrojanParser) GetPrefixes() []string {
 	return []string{"trojan://"}
 }

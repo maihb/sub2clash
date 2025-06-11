@@ -11,6 +11,14 @@ import (
 
 type VlessParser struct{}
 
+func (p *VlessParser) SupportClash() bool {
+	return false
+}
+
+func (p *VlessParser) SupportMeta() bool {
+	return true
+}
+
 func (p *VlessParser) GetPrefixes() []string {
 	return []string{"vless://"}
 }

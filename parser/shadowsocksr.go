@@ -11,6 +11,14 @@ import (
 
 type ShadowsocksRParser struct{}
 
+func (p *ShadowsocksRParser) SupportClash() bool {
+	return true
+}
+
+func (p *ShadowsocksRParser) SupportMeta() bool {
+	return true
+}
+
 func (p *ShadowsocksRParser) GetPrefixes() []string {
 	return []string{"ssr://"}
 }

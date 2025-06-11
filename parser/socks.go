@@ -11,6 +11,13 @@ import (
 
 type SocksParser struct{}
 
+func (p *SocksParser) SupportClash() bool {
+	return true
+}
+func (p *SocksParser) SupportMeta() bool {
+	return true
+}
+
 func (p *SocksParser) GetPrefixes() []string {
 	return []string{"socks://"}
 }

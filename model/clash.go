@@ -1,5 +1,7 @@
 package model
 
+import "github.com/bestnite/sub2clash/parser"
+
 type ClashType int
 
 const (
@@ -8,29 +10,19 @@ const (
 )
 
 func GetSupportProxyTypes(clashType ClashType) map[string]bool {
-	if clashType == Clash {
-		return map[string]bool{
-			"ss":     true,
-			"ssr":    true,
-			"vmess":  true,
-			"trojan": true,
-			"socks5": true,
+	supportProxyTypes := make(map[string]bool)
+
+	for _, parser := range parser.GetAllParsers() {
+		if clashType == Clash {
+			if parser.SupportClash() {
+				supportProxyTypes[parser.GetType()] = true
+			}
+		} else if clashType == ClashMeta {
+			if parser.SupportMeta() {
+				supportProxyTypes[parser.GetType()] = true
+			}
 		}
 	}
 
-	if clashType == ClashMeta {
-		return map[string]bool{
-			"ss":        true,
-			"ssr":       true,
-			"vmess":     true,
-			"trojan":    true,
-			"vless":     true,
-			"hysteria":  true,
-			"hysteria2": true,
-			"socks5":    true,
-			"anytls":    true,
-		}
-	}
-
-	return nil
+	return supportProxyTypes
 }

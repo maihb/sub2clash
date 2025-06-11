@@ -16,6 +16,8 @@ type ProxyParser interface {
 	GetPrefixes() []string
 	// GetType 返回协议类型名称
 	GetType() string
+	SupportClash() bool
+	SupportMeta() bool
 }
 
 // parserRegistry 解析器注册中心

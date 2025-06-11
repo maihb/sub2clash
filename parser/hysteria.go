@@ -12,6 +12,14 @@ import (
 
 type HysteriaParser struct{}
 
+func (p *HysteriaParser) SupportClash() bool {
+	return false
+}
+
+func (p *HysteriaParser) SupportMeta() bool {
+	return true
+}
+
 func (p *HysteriaParser) GetPrefixes() []string {
 	return []string{"hysteria://"}
 }

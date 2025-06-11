@@ -12,6 +12,14 @@ import (
 // ShadowsocksParser Shadowsocks协议解析器
 type ShadowsocksParser struct{}
 
+func (p *ShadowsocksParser) SupportClash() bool {
+	return true
+}
+
+func (p *ShadowsocksParser) SupportMeta() bool {
+	return true
+}
+
 // GetPrefixes 返回支持的协议前缀
 func (p *ShadowsocksParser) GetPrefixes() []string {
 	return []string{"ss://"}

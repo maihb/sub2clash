@@ -11,6 +11,14 @@ import (
 
 type AnytlsParser struct{}
 
+func (p *AnytlsParser) SupportClash() bool {
+	return false
+}
+
+func (p *AnytlsParser) SupportMeta() bool {
+	return true
+}
+
 func (p *AnytlsParser) GetPrefixes() []string {
 	return []string{"anytls://"}
 }

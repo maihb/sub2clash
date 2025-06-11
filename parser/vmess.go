@@ -12,6 +12,14 @@ import (
 
 type VmessParser struct{}
 
+func (p *VmessParser) SupportClash() bool {
+	return true
+}
+
+func (p *VmessParser) SupportMeta() bool {
+	return true
+}
+
 func (p *VmessParser) GetPrefixes() []string {
 	return []string{"vmess://"}
 }
