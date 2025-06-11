@@ -1,48 +1,21 @@
 package proxy
 
-type HTTPOptions struct {
-	Method  string              `yaml:"method,omitempty"`
-	Path    []string            `yaml:"path,omitempty"`
-	Headers map[string][]string `yaml:"headers,omitempty"`
-}
-
-type HTTP2Options struct {
-	Host []string `yaml:"host,omitempty"`
-	Path string   `yaml:"path,omitempty"`
-}
-
-type GrpcOptions struct {
-	GrpcServiceName string `yaml:"grpc-service-name,omitempty"`
-}
-
-type RealityOptions struct {
-	PublicKey string `yaml:"public-key"`
-	ShortID   string `yaml:"short-id,omitempty"`
-}
-
-type WSOptions struct {
-	Path                string            `yaml:"path,omitempty"`
-	Headers             map[string]string `yaml:"headers,omitempty"`
-	MaxEarlyData        int               `yaml:"max-early-data,omitempty"`
-	EarlyDataHeaderName string            `yaml:"early-data-header-name,omitempty"`
-}
-
 type VmessJson struct {
-	V    string      `json:"v"`
-	Ps   string      `json:"ps"`
-	Add  string      `json:"add"`
-	Port interface{} `json:"port"`
-	Id   string      `json:"id"`
-	Aid  interface{} `json:"aid"`
-	Scy  string      `json:"scy"`
-	Net  string      `json:"net"`
-	Type string      `json:"type"`
-	Host string      `json:"host"`
-	Path string      `json:"path"`
-	Tls  string      `json:"tls"`
-	Sni  string      `json:"sni"`
-	Alpn string      `json:"alpn"`
-	Fp   string      `json:"fp"`
+	V    any    `json:"v"`
+	Ps   string `json:"ps"`
+	Add  string `json:"add"`
+	Port any    `json:"port"`
+	Id   string `json:"id"`
+	Aid  any    `json:"aid"`
+	Scy  string `json:"scy"`
+	Net  string `json:"net"`
+	Type string `json:"type"`
+	Host string `json:"host"`
+	Path string `json:"path"`
+	Tls  string `json:"tls"`
+	Sni  string `json:"sni"`
+	Alpn string `json:"alpn"`
+	Fp   string `json:"fp"`
 }
 
 type Vmess struct {

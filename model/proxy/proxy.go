@@ -1,5 +1,32 @@
 package proxy
 
+type HTTPOptions struct {
+	Method  string              `yaml:"method,omitempty"`
+	Path    []string            `yaml:"path,omitempty"`
+	Headers map[string][]string `yaml:"headers,omitempty"`
+}
+
+type HTTP2Options struct {
+	Host []string `yaml:"host,omitempty"`
+	Path string   `yaml:"path,omitempty"`
+}
+
+type GrpcOptions struct {
+	GrpcServiceName string `yaml:"grpc-service-name,omitempty"`
+}
+
+type RealityOptions struct {
+	PublicKey string `yaml:"public-key"`
+	ShortID   string `yaml:"short-id,omitempty"`
+}
+
+type WSOptions struct {
+	Path                string            `yaml:"path,omitempty"`
+	Headers             map[string]string `yaml:"headers,omitempty"`
+	MaxEarlyData        int               `yaml:"max-early-data,omitempty"`
+	EarlyDataHeaderName string            `yaml:"early-data-header-name,omitempty"`
+}
+
 type SmuxStruct struct {
 	Enabled bool `yaml:"enable"`
 }
