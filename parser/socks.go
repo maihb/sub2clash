@@ -78,31 +78,10 @@ func (p *SocksParser) Parse(proxy string) (P.Proxy, error) {
 		if err == nil {
 			usernameAndPassword := strings.SplitN(decodedStr, ":", 2)
 			if len(usernameAndPassword) == 2 {
-				username, err = url.QueryUnescape(usernameAndPassword[0])
-				if err != nil {
-					return P.Proxy{}, &ParseError{
-						Type:    ErrInvalidStruct,
-						Message: "invalid username",
-						Raw:     proxy,
-					}
-				}
-				password, err = url.QueryUnescape(usernameAndPassword[1])
-				if err != nil {
-					return P.Proxy{}, &ParseError{
-						Type:    ErrInvalidStruct,
-						Message: "invalid password",
-						Raw:     proxy,
-					}
-				}
+				username = usernameAndPassword[0]
+				password = usernameAndPassword[1]
 			} else {
-				username, err = url.QueryUnescape(decodedStr)
-				if err != nil {
-					return P.Proxy{}, &ParseError{
-						Type:    ErrInvalidStruct,
-						Message: "invalid username",
-						Raw:     proxy,
-					}
-				}
+				username = decodedStr
 			}
 		}
 	}
