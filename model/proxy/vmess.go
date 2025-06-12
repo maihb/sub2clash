@@ -1,5 +1,6 @@
 package proxy
 
+// https://github.com/MetaCubeX/mihomo/blob/Meta/adapter/outbound/vmess.go
 type Vmess struct {
 	Server              string         `yaml:"server"`
 	Port                int            `yaml:"port"`
@@ -9,10 +10,11 @@ type Vmess struct {
 	UDP                 bool           `yaml:"udp,omitempty"`
 	Network             string         `yaml:"network,omitempty"`
 	TLS                 bool           `yaml:"tls,omitempty"`
-	Alpn                []string       `yaml:"alpn,omitempty"`
+	ALPN                []string       `yaml:"alpn,omitempty"`
 	SkipCertVerify      bool           `yaml:"skip-cert-verify,omitempty"`
 	Fingerprint         string         `yaml:"fingerprint,omitempty"`
 	ServerName          string         `yaml:"servername,omitempty"`
+	ECHOpts             ECHOptions     `yaml:"ech-opts,omitempty"`
 	RealityOpts         RealityOptions `yaml:"reality-opts,omitempty"`
 	HTTPOpts            HTTPOptions    `yaml:"http-opts,omitempty"`
 	HTTP2Opts           HTTP2Options   `yaml:"h2-opts,omitempty"`
@@ -24,5 +26,4 @@ type Vmess struct {
 	GlobalPadding       bool           `yaml:"global-padding,omitempty"`
 	AuthenticatedLength bool           `yaml:"authenticated-length,omitempty"`
 	ClientFingerprint   string         `yaml:"client-fingerprint,omitempty"`
-	Servername          string         `yaml:"servername,omitempty"`
 }

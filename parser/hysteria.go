@@ -69,7 +69,7 @@ func (p *HysteriaParser) Parse(proxy string) (P.Proxy, error) {
 
 	query := link.Query()
 
-	protocol, auth, insecure, upmbps, downmbps, obfs, alpnStr := query.Get("protocol"), query.Get("auth"), query.Get("insecure"), query.Get("upmbps"), query.Get("downmbps"), query.Get("obfs"), query.Get("alpn")
+	protocol, auth, auth_str, insecure, upmbps, downmbps, obfs, alpnStr := query.Get("protocol"), query.Get("auth"), query.Get("auth-str"), query.Get("insecure"), query.Get("upmbps"), query.Get("downmbps"), query.Get("obfs"), query.Get("alpn")
 	insecureBool, err := strconv.ParseBool(insecure)
 	if err != nil {
 		insecureBool = false
@@ -96,11 +96,11 @@ func (p *HysteriaParser) Parse(proxy string) (P.Proxy, error) {
 			Up:             upmbps,
 			Down:           downmbps,
 			Auth:           auth,
+			AuthString:     auth_str,
 			Obfs:           obfs,
 			SkipCertVerify: insecureBool,
-			Alpn:           alpn,
+			ALPN:           alpn,
 			Protocol:       protocol,
-			AllowInsecure:  insecureBool,
 		},
 	}
 	return result, nil

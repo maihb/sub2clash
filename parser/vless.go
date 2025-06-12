@@ -84,15 +84,14 @@ func (p *VlessParser) Parse(proxy string) (P.Proxy, error) {
 
 	if security == "tls" {
 		result.TLS = true
-		result.Alpn = alpn
-		result.Sni = sni
-		result.AllowInsecure = insecureBool
+		result.ALPN = alpn
+		result.SkipCertVerify = insecureBool
 		result.ClientFingerprint = fp
 	}
 
 	if security == "reality" {
 		result.TLS = true
-		result.Servername = sni
+		result.ServerName = sni
 		result.RealityOpts = P.RealityOptions{
 			PublicKey: pbk,
 			ShortID:   sid,

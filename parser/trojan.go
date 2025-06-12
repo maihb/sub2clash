@@ -91,14 +91,12 @@ func (p *TrojanParser) Parse(proxy string) (P.Proxy, error) {
 	}
 
 	if security == "xtls" || security == "tls" {
-		result.Alpn = alpn
-		result.Sni = sni
-		result.TLS = true
+		result.ALPN = alpn
+		result.SNI = sni
 	}
 
 	if security == "reality" {
-		result.TLS = true
-		result.Sni = sni
+		result.SNI = sni
 		result.RealityOpts = P.RealityOptions{
 			PublicKey: pbk,
 			ShortID:   sid,

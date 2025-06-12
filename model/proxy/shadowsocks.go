@@ -1,5 +1,6 @@
 package proxy
 
+// https://github.com/MetaCubeX/mihomo/blob/Meta/adapter/outbound/shadowsocks.go
 type ShadowSocks struct {
 	Server            string         `yaml:"server"`
 	Port              int            `yaml:"port"`

@@ -170,7 +170,7 @@ func BuildSub(clashType model.ClashType, query model.SubConfig, template string,
 				newProxies = p
 			}
 		} else {
-			newProxies = sub.Proxies
+			newProxies = sub.Proxy
 		}
 		if subName != "" {
 			for i := range newProxies {
@@ -180,7 +180,7 @@ func BuildSub(clashType model.ClashType, query model.SubConfig, template string,
 		proxyList = append(proxyList, newProxies...)
 	}
 
-	if len(query.Proxies) != 0 {
+	if len(query.Proxy) != 0 {
 		proxyList = append(proxyList, parser.ParseProxies(query.Proxies...)...)
 	}
 
@@ -265,15 +265,15 @@ func BuildSub(clashType model.ClashType, query model.SubConfig, template string,
 
 	switch query.Sort {
 	case "sizeasc":
-		sort.Sort(model.ProxyGroupsSortBySize(t.ProxyGroups))
+		sort.Sort(model.ProxyGroupsSortBySize(t.ProxyGroup))
 	case "sizedesc":
-		sort.Sort(sort.Reverse(model.ProxyGroupsSortBySize(t.ProxyGroups)))
+		sort.Sort(sort.Reverse(model.ProxyGroupsSortBySize(t.ProxyGroup)))
 	case "nameasc":
-		sort.Sort(model.ProxyGroupsSortByName(t.ProxyGroups))
+		sort.Sort(model.ProxyGroupsSortByName(t.ProxyGroup))
 	case "namedesc":
-		sort.Sort(sort.Reverse(model.ProxyGroupsSortByName(t.ProxyGroups)))
+		sort.Sort(sort.Reverse(model.ProxyGroupsSortByName(t.ProxyGroup)))
 	default:
-		sort.Sort(model.ProxyGroupsSortByName(t.ProxyGroups))
+		sort.Sort(model.ProxyGroupsSortByName(t.ProxyGroup))
 	}
 
 	MergeSubAndTemplate(temp, t, query.IgnoreCountryGrooup)
@@ -328,7 +328,7 @@ func FetchSubscriptionUserInfo(url string, userAgent string, retryTimes int) (st
 
 func MergeSubAndTemplate(temp *model.Subscription, sub *model.Subscription, igcg bool) {
 	var countryGroupNames []string
-	for _, proxyGroup := range sub.ProxyGroups {
+	for _, proxyGroup := range sub.ProxyGroup {
 		if proxyGroup.IsCountryGrop {
 			countryGroupNames = append(
 				countryGroupNames, proxyGroup.Name,
@@ -336,27 +336,27 @@ func MergeSubAndTemplate(temp *model.Subscription, sub *model.Subscription, igcg
 		}
 	}
 	var proxyNames []string
-	for _, proxy := range sub.Proxies {
+	for _, proxy := range sub.Proxy {
 		proxyNames = append(proxyNames, proxy.Name)
 	}
 
-	temp.Proxies = append(temp.Proxies, sub.Proxies...)
+	temp.Proxy = append(temp.Proxy, sub.Proxy...)
 
-	for i := range temp.ProxyGroups {
-		if temp.ProxyGroups[i].IsCountryGrop {
+	for i := range temp.ProxyGroup {
+		if temp.ProxyGroup[i].IsCountryGrop {
 			continue
 		}
 		newProxies := make([]string, 0)
 		countryGroupMap := make(map[string]model.ProxyGroup)
-		for _, v := range sub.ProxyGroups {
+		for _, v := range sub.ProxyGroup {
 			if v.IsCountryGrop {
 				countryGroupMap[v.Name] = v
 			}
 		}
-		for j := range temp.ProxyGroups[i].Proxies {
+		for j := range temp.ProxyGroup[i].Proxies {
 			reg := regexp.MustCompile("<(.*?)>")
-			if reg.Match([]byte(temp.ProxyGroups[i].Proxies[j])) {
-				key := reg.FindStringSubmatch(temp.ProxyGroups[i].Proxies[j])[1]
+			if reg.Match([]byte(temp.ProxyGroup[i].Proxies[j])) {
+				key := reg.FindStringSubmatch(temp.ProxyGroup[i].Proxies[j])[1]
 				switch key {
 				case "all":
 					newProxies = append(newProxies, proxyNames...)
@@ -374,12 +374,12 @@ func MergeSubAndTemplate(temp *model.Subscription, sub *model.Subscription, igcg
 					}
 				}
 			} else {
-				newProxies = append(newProxies, temp.ProxyGroups[i].Proxies[j])
+				newProxies = append(newProxies, temp.ProxyGroup[i].Proxies[j])
 			}
 		}
-		temp.ProxyGroups[i].Proxies = newProxies
+		temp.ProxyGroup[i].Proxies = newProxies
 	}
 	if !igcg {
-		temp.ProxyGroups = append(temp.ProxyGroups, sub.ProxyGroups...)
+		temp.ProxyGroup = append(temp.ProxyGroup, sub.ProxyGroup...)
 	}
 }

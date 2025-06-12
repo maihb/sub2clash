@@ -91,7 +91,7 @@ func (p *SocksParser) Parse(proxy string) (P.Proxy, error) {
 		Socks: P.Socks{
 			Server:   server,
 			Port:     port,
-			Username: username,
+			UserName: username,
 			Password: password,
 		},
 	}, nil

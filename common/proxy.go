@@ -56,11 +56,11 @@ func AddProxy(
 		if !proxyTypes[proxy.Type] {
 			continue
 		}
-		sub.Proxies = append(sub.Proxies, proxy)
+		sub.Proxy = append(sub.Proxy, proxy)
 		haveProxyGroup := false
 		countryName := GetContryName(proxy.Name)
-		for i := range sub.ProxyGroups {
-			group := &sub.ProxyGroups[i]
+		for i := range sub.ProxyGroup {
+			group := &sub.ProxyGroup[i]
 			if group.Name == countryName {
 				group.Proxies = append(group.Proxies, proxy.Name)
 				group.Size++
@@ -90,7 +90,7 @@ func AddProxy(
 					Size:          1,
 				}
 			}
-			sub.ProxyGroups = append(sub.ProxyGroups, newGroup)
+			sub.ProxyGroup = append(sub.ProxyGroup, newGroup)
 		}
 	}
 }

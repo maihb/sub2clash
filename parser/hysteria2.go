@@ -70,8 +70,7 @@ func (p *Hysteria2Parser) Parse(proxy string) (P.Proxy, error) {
 			Raw:  portStr,
 		}
 	}
-	network, obfs, obfsPassword, pinSHA256, insecure, sni := query.Get("network"), query.Get("obfs"), query.Get("obfs-password"), query.Get("pinSHA256"), query.Get("insecure"), query.Get("sni")
-	enableTLS := pinSHA256 != "" || sni != ""
+	obfs, obfsPassword, insecure, sni := query.Get("obfs"), query.Get("obfs-password"), query.Get("insecure"), query.Get("sni")
 	insecureBool := insecure == "1"
 	remarks := link.Fragment
 	if remarks == "" {
@@ -87,11 +86,9 @@ func (p *Hysteria2Parser) Parse(proxy string) (P.Proxy, error) {
 			Port:           port,
 			Password:       password,
 			Obfs:           obfs,
-			ObfsParam:      obfsPassword,
-			Sni:            sni,
+			ObfsPassword:   obfsPassword,
+			SNI:            sni,
 			SkipCertVerify: insecureBool,
-			TLS:            enableTLS,
-			Network:        network,
 		},
 	}
 	return result, nil

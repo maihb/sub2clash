@@ -42,6 +42,11 @@ type WireGuardPeerOption struct {
 	AllowedIPs   []string `yaml:"allowed-ips,omitempty"`
 }
 
+type ECHOptions struct {
+	Enable bool   `yaml:"enable,omitempty" obfs:"enable,omitempty"`
+	Config string `yaml:"config,omitempty" obfs:"config,omitempty"`
+}
+
 type Proxy struct {
 	Type    string
 	Name    string

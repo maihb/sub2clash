@@ -85,7 +85,7 @@ func (p *AnytlsParser) Parse(proxy string) (P.Proxy, error) {
 			Server:         server,
 			Port:           port,
 			Password:       password,
-			Sni:            sni,
+			SNI:            sni,
 			SkipCertVerify: insecureBool,
 		},
 	}

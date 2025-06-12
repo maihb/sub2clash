@@ -35,7 +35,7 @@ func SubHandler(model M.ClashType, template string) func(c *gin.Context) {
 
 		if query.NodeListMode {
 			nodelist := M.NodeList{}
-			nodelist.Proxies = sub.Proxies
+			nodelist.Proxy = sub.Proxy
 			marshal, err := yaml.Marshal(nodelist)
 			if err != nil {
 				c.String(http.StatusInternalServerError, "YAML序列化失败: "+err.Error())

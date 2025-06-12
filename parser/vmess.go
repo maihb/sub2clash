@@ -119,8 +119,8 @@ func (p *VmessParser) Parse(proxy string) (P.Proxy, error) {
 		}
 		result.TLS = true
 		result.Fingerprint = vmess.Fp
-		result.Alpn = alpn
-		result.Servername = vmess.Sni
+		result.ALPN = alpn
+		result.ServerName = vmess.Sni
 	}
 
 	if vmess.Net == "ws" {
