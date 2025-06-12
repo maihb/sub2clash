@@ -86,4 +86,4 @@
 
 ## 贡献者
 
-![https://contrib.rocks/image?repo=bestnite/sub2clash](https://github.com/bestnite/sub2clash/graphs/contributors)
+[![](https://contrib.rocks/image?repo=bestnite/sub2clash)](https://github.com/bestnite/sub2clash/graphs/contributors)
