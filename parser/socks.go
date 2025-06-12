@@ -5,7 +5,6 @@ import (
 	"net/url"
 	"strings"
 
-	E "github.com/bestnite/sub2clash/error"
 	P "github.com/bestnite/sub2clash/model/proxy"
 )
 
@@ -28,37 +27,37 @@ func (p *SocksParser) GetType() string {
 
 func (p *SocksParser) Parse(proxy string) (P.Proxy, error) {
 	if !hasPrefix(proxy, p.GetPrefixes()) {
-		return P.Proxy{}, &E.ParseError{Type: E.ErrInvalidPrefix, Raw: proxy}
+		return P.Proxy{}, &ParseError{Type: ErrInvalidPrefix, Raw: proxy}
 	}
 
 	link, err := url.Parse(proxy)
 	if err != nil {
-		return P.Proxy{}, &E.ParseError{
-			Type:    E.ErrInvalidStruct,
+		return P.Proxy{}, &ParseError{
+			Type:    ErrInvalidStruct,
 			Message: "url parse error",
 			Raw:     proxy,
 		}
 	}
 	server := link.Hostname()
 	if server == "" {
-		return P.Proxy{}, &E.ParseError{
-			Type:    E.ErrInvalidStruct,
+		return P.Proxy{}, &ParseError{
+			Type:    ErrInvalidStruct,
 			Message: "missing server host",
 			Raw:     proxy,
 		}
 	}
 	portStr := link.Port()
 	if portStr == "" {
-		return P.Proxy{}, &E.ParseError{
-			Type:    E.ErrInvalidStruct,
+		return P.Proxy{}, &ParseError{
+			Type:    ErrInvalidStruct,
 			Message: "missing server port",
 			Raw:     proxy,
 		}
 	}
 	port, err := ParsePort(portStr)
 	if err != nil {
-		return P.Proxy{}, &E.ParseError{
-			Type: E.ErrInvalidPort,
+		return P.Proxy{}, &ParseError{
+			Type: ErrInvalidPort,
 			Raw:  portStr,
 		}
 	}
@@ -75,8 +74,8 @@ func (p *SocksParser) Parse(proxy string) (P.Proxy, error) {
 		decodeStr, err := DecodeBase64(encodeStr)
 		splitStr := strings.Split(decodeStr, ":")
 		if err != nil {
-			return P.Proxy{}, &E.ParseError{
-				Type:    E.ErrInvalidStruct,
+			return P.Proxy{}, &ParseError{
+				Type:    ErrInvalidStruct,
 				Message: "url parse error",
 				Raw:     proxy,
 			}

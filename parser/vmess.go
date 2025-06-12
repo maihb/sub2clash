@@ -6,7 +6,6 @@ import (
 	"strconv"
 	"strings"
 
-	E "github.com/bestnite/sub2clash/error"
 	P "github.com/bestnite/sub2clash/model/proxy"
 )
 
@@ -48,7 +47,7 @@ func (p *VmessParser) GetType() string {
 
 func (p *VmessParser) Parse(proxy string) (P.Proxy, error) {
 	if !hasPrefix(proxy, p.GetPrefixes()) {
-		return P.Proxy{}, &E.ParseError{Type: E.ErrInvalidPrefix, Raw: proxy}
+		return P.Proxy{}, &ParseError{Type: ErrInvalidPrefix, Raw: proxy}
 	}
 
 	for _, prefix := range p.GetPrefixes() {
@@ -59,13 +58,13 @@ func (p *VmessParser) Parse(proxy string) (P.Proxy, error) {
 	}
 	base64, err := DecodeBase64(proxy)
 	if err != nil {
-		return P.Proxy{}, &E.ParseError{Type: E.ErrInvalidBase64, Raw: proxy, Message: err.Error()}
+		return P.Proxy{}, &ParseError{Type: ErrInvalidBase64, Raw: proxy, Message: err.Error()}
 	}
 
 	var vmess VmessJson
 	err = json.Unmarshal([]byte(base64), &vmess)
 	if err != nil {
-		return P.Proxy{}, &E.ParseError{Type: E.ErrInvalidStruct, Raw: proxy, Message: err.Error()}
+		return P.Proxy{}, &ParseError{Type: ErrInvalidStruct, Raw: proxy, Message: err.Error()}
 	}
 
 	var port int
@@ -73,8 +72,8 @@ func (p *VmessParser) Parse(proxy string) (P.Proxy, error) {
 	case string:
 		port, err = ParsePort(vmess.Port.(string))
 		if err != nil {
-			return P.Proxy{}, &E.ParseError{
-				Type:    E.ErrInvalidPort,
+			return P.Proxy{}, &ParseError{
+				Type:    ErrInvalidPort,
 				Message: err.Error(),
 				Raw:     proxy,
 			}
@@ -88,7 +87,7 @@ func (p *VmessParser) Parse(proxy string) (P.Proxy, error) {
 	case string:
 		aid, err = strconv.Atoi(vmess.Aid.(string))
 		if err != nil {
-			return P.Proxy{}, &E.ParseError{Type: E.ErrInvalidStruct, Raw: proxy, Message: err.Error()}
+			return P.Proxy{}, &ParseError{Type: ErrInvalidStruct, Raw: proxy, Message: err.Error()}
 		}
 	case float64:
 		aid = int(vmess.Aid.(float64))

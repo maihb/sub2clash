@@ -5,7 +5,6 @@ import (
 	"net/url"
 	"strings"
 
-	E "github.com/bestnite/sub2clash/error"
 	P "github.com/bestnite/sub2clash/model/proxy"
 )
 
@@ -29,13 +28,13 @@ func (p *TrojanParser) GetType() string {
 
 func (p *TrojanParser) Parse(proxy string) (P.Proxy, error) {
 	if !hasPrefix(proxy, p.GetPrefixes()) {
-		return P.Proxy{}, &E.ParseError{Type: E.ErrInvalidPrefix, Raw: proxy}
+		return P.Proxy{}, &ParseError{Type: ErrInvalidPrefix, Raw: proxy}
 	}
 
 	link, err := url.Parse(proxy)
 	if err != nil {
-		return P.Proxy{}, &E.ParseError{
-			Type:    E.ErrInvalidStruct,
+		return P.Proxy{}, &ParseError{
+			Type:    ErrInvalidStruct,
 			Message: "url parse error",
 			Raw:     proxy,
 		}
@@ -44,16 +43,16 @@ func (p *TrojanParser) Parse(proxy string) (P.Proxy, error) {
 	password := link.User.Username()
 	server := link.Hostname()
 	if server == "" {
-		return P.Proxy{}, &E.ParseError{
-			Type:    E.ErrInvalidStruct,
+		return P.Proxy{}, &ParseError{
+			Type:    ErrInvalidStruct,
 			Message: "missing server host",
 			Raw:     proxy,
 		}
 	}
 	portStr := link.Port()
 	if portStr == "" {
-		return P.Proxy{}, &E.ParseError{
-			Type:    E.ErrInvalidStruct,
+		return P.Proxy{}, &ParseError{
+			Type:    ErrInvalidStruct,
 			Message: "missing server port",
 			Raw:     proxy,
 		}
@@ -61,8 +60,8 @@ func (p *TrojanParser) Parse(proxy string) (P.Proxy, error) {
 
 	port, err := ParsePort(portStr)
 	if err != nil {
-		return P.Proxy{}, &E.ParseError{
-			Type:    E.ErrInvalidPort,
+		return P.Proxy{}, &ParseError{
+			Type:    ErrInvalidPort,
 			Message: err.Error(),
 			Raw:     proxy,
 		}

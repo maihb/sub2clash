@@ -5,7 +5,6 @@ import (
 	"strconv"
 	"strings"
 
-	E "github.com/bestnite/sub2clash/error"
 	P "github.com/bestnite/sub2clash/model/proxy"
 )
 
@@ -29,7 +28,7 @@ func (p *ShadowsocksRParser) GetType() string {
 
 func (p *ShadowsocksRParser) Parse(proxy string) (P.Proxy, error) {
 	if !hasPrefix(proxy, p.GetPrefixes()) {
-		return P.Proxy{}, &E.ParseError{Type: E.ErrInvalidPrefix, Raw: proxy}
+		return P.Proxy{}, &ParseError{Type: ErrInvalidPrefix, Raw: proxy}
 	}
 
 	for _, prefix := range p.GetPrefixes() {
@@ -41,8 +40,8 @@ func (p *ShadowsocksRParser) Parse(proxy string) (P.Proxy, error) {
 
 	proxy, err := DecodeBase64(proxy)
 	if err != nil {
-		return P.Proxy{}, &E.ParseError{
-			Type: E.ErrInvalidBase64,
+		return P.Proxy{}, &ParseError{
+			Type: ErrInvalidBase64,
 			Raw:  proxy,
 		}
 	}
@@ -54,16 +53,16 @@ func (p *ShadowsocksRParser) Parse(proxy string) (P.Proxy, error) {
 	obfs := parts[4]
 	password, err := DecodeBase64(parts[5])
 	if err != nil {
-		return P.Proxy{}, &E.ParseError{
-			Type:    E.ErrInvalidStruct,
+		return P.Proxy{}, &ParseError{
+			Type:    ErrInvalidStruct,
 			Raw:     proxy,
 			Message: err.Error(),
 		}
 	}
 	port, err := ParsePort(parts[1])
 	if err != nil {
-		return P.Proxy{}, &E.ParseError{
-			Type:    E.ErrInvalidPort,
+		return P.Proxy{}, &ParseError{
+			Type:    ErrInvalidPort,
 			Message: err.Error(),
 			Raw:     proxy,
 		}
@@ -75,8 +74,8 @@ func (p *ShadowsocksRParser) Parse(proxy string) (P.Proxy, error) {
 	if len(serverInfoAndParams) == 2 {
 		params, err := url.ParseQuery(serverInfoAndParams[1])
 		if err != nil {
-			return P.Proxy{}, &E.ParseError{
-				Type:    E.ErrCannotParseParams,
+			return P.Proxy{}, &ParseError{
+				Type:    ErrCannotParseParams,
 				Raw:     proxy,
 				Message: err.Error(),
 			}
@@ -93,8 +92,8 @@ func (p *ShadowsocksRParser) Parse(proxy string) (P.Proxy, error) {
 			remarks = server + ":" + strconv.Itoa(port)
 		}
 		if err != nil {
-			return P.Proxy{}, &E.ParseError{
-				Type:    E.ErrInvalidStruct,
+			return P.Proxy{}, &ParseError{
+				Type:    ErrInvalidStruct,
 				Raw:     proxy,
 				Message: err.Error(),
 			}

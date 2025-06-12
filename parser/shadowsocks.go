@@ -5,7 +5,6 @@ import (
 	"net/url"
 	"strings"
 
-	E "github.com/bestnite/sub2clash/error"
 	P "github.com/bestnite/sub2clash/model/proxy"
 )
 
@@ -33,7 +32,7 @@ func (p *ShadowsocksParser) GetType() string {
 // Parse 解析Shadowsocks代理
 func (p *ShadowsocksParser) Parse(proxy string) (P.Proxy, error) {
 	if !hasPrefix(proxy, p.GetPrefixes()) {
-		return P.Proxy{}, &E.ParseError{Type: E.ErrInvalidPrefix, Raw: proxy}
+		return P.Proxy{}, &ParseError{Type: ErrInvalidPrefix, Raw: proxy}
 	}
 
 	if !strings.Contains(proxy, "@") {
@@ -46,8 +45,8 @@ func (p *ShadowsocksParser) Parse(proxy string) (P.Proxy, error) {
 		}
 		d, err := DecodeBase64(s[0])
 		if err != nil {
-			return P.Proxy{}, &E.ParseError{
-				Type:    E.ErrInvalidStruct,
+			return P.Proxy{}, &ParseError{
+				Type:    ErrInvalidStruct,
 				Message: "url parse error",
 				Raw:     proxy,
 			}
@@ -60,8 +59,8 @@ func (p *ShadowsocksParser) Parse(proxy string) (P.Proxy, error) {
 	}
 	link, err := url.Parse(proxy)
 	if err != nil {
-		return P.Proxy{}, &E.ParseError{
-			Type:    E.ErrInvalidStruct,
+		return P.Proxy{}, &ParseError{
+			Type:    ErrInvalidStruct,
 			Message: "url parse error",
 			Raw:     proxy,
 		}
@@ -69,8 +68,8 @@ func (p *ShadowsocksParser) Parse(proxy string) (P.Proxy, error) {
 
 	server := link.Hostname()
 	if server == "" {
-		return P.Proxy{}, &E.ParseError{
-			Type:    E.ErrInvalidStruct,
+		return P.Proxy{}, &ParseError{
+			Type:    ErrInvalidStruct,
 			Message: "missing server host",
 			Raw:     proxy,
 		}
@@ -78,16 +77,16 @@ func (p *ShadowsocksParser) Parse(proxy string) (P.Proxy, error) {
 
 	portStr := link.Port()
 	if portStr == "" {
-		return P.Proxy{}, &E.ParseError{
-			Type:    E.ErrInvalidStruct,
+		return P.Proxy{}, &ParseError{
+			Type:    ErrInvalidStruct,
 			Message: "missing server port",
 			Raw:     proxy,
 		}
 	}
 	port, err := ParsePort(portStr)
 	if err != nil {
-		return P.Proxy{}, &E.ParseError{
-			Type: E.ErrInvalidStruct,
+		return P.Proxy{}, &ParseError{
+			Type: ErrInvalidStruct,
 			Raw:  proxy,
 		}
 	}
@@ -108,8 +107,8 @@ func (p *ShadowsocksParser) Parse(proxy string) (P.Proxy, error) {
 	if isLikelyBase64(password) {
 		password, err = DecodeBase64(password)
 		if err != nil {
-			return P.Proxy{}, &E.ParseError{
-				Type:    E.ErrInvalidStruct,
+			return P.Proxy{}, &ParseError{
+				Type:    ErrInvalidStruct,
 				Message: "password decode error",
 				Raw:     proxy,
 			}

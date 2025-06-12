@@ -1,7 +1,6 @@
 package common
 
 import (
-	"errors"
 	"io"
 	"os"
 )
@@ -23,5 +22,5 @@ func LoadTemplate(templatePath string) ([]byte, error) {
 		}
 		return result, nil
 	}
-	return nil, errors.New("模板文件不存在")
+	return nil, NewFileNotFoundError(templatePath)
 }

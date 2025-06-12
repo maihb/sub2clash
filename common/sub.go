@@ -3,7 +3,6 @@ package common
 import (
 	"crypto/sha256"
 	"encoding/hex"
-	"errors"
 	"fmt"
 	"io"
 	"net/url"
@@ -110,26 +109,26 @@ func BuildSub(clashType model.ClashType, query model.SubConfig, template string,
 			logger.Logger.Debug(
 				"load template failed", zap.String("template", template), zap.Error(err),
 			)
-			return nil, errors.New("加载模板失败: " + err.Error())
+			return nil, NewTemplateLoadError(template, err)
 		}
 	} else {
 		unescape, err := url.QueryUnescape(template)
 		if err != nil {
-			return nil, errors.New("加载模板失败: " + err.Error())
+			return nil, NewTemplateLoadError(template, err)
 		}
 		templateBytes, err = LoadTemplate(unescape)
 		if err != nil {
 			logger.Logger.Debug(
 				"load template failed", zap.String("template", template), zap.Error(err),
 			)
-			return nil, errors.New("加载模板失败: " + err.Error())
+			return nil, NewTemplateLoadError(unescape, err)
 		}
 	}
 
 	err = yaml.Unmarshal(templateBytes, &temp)
 	if err != nil {
 		logger.Logger.Debug("parse template failed", zap.Error(err))
-		return nil, errors.New("解析模板失败: " + err.Error())
+		return nil, NewTemplateParseError(err)
 	}
 	var proxyList []P.Proxy
 
@@ -143,7 +142,7 @@ func BuildSub(clashType model.ClashType, query model.SubConfig, template string,
 			logger.Logger.Debug(
 				"load subscription failed", zap.String("url", query.Subs[i]), zap.Error(err),
 			)
-			return nil, errors.New("加载订阅失败: " + err.Error())
+			return nil, NewSubscriptionLoadError(query.Subs[i], err)
 		}
 
 		err = yaml.Unmarshal(data, &sub)
@@ -161,7 +160,7 @@ func BuildSub(clashType model.ClashType, query model.SubConfig, template string,
 						zap.String("data", string(data)),
 						zap.Error(err),
 					)
-					return nil, errors.New("加载订阅失败: " + err.Error())
+					return nil, NewSubscriptionParseError(err)
 				}
 				p := parser.ParseProxies(strings.Split(base64, "\n")...)
 				newProxies = p
@@ -193,7 +192,7 @@ func BuildSub(clashType model.ClashType, query model.SubConfig, template string,
 		yamlBytes, err := yaml.Marshal(proxyList[i])
 		if err != nil {
 			logger.Logger.Debug("marshal proxy failed", zap.Error(err))
-			return nil, errors.New("marshal proxy failed: " + err.Error())
+			return nil, fmt.Errorf("marshal proxy failed: %w", err)
 		}
 		key := string(yamlBytes)
 		if _, exist := proxies[key]; !exist {
@@ -209,7 +208,7 @@ func BuildSub(clashType model.ClashType, query model.SubConfig, template string,
 			removeReg, err := regexp.Compile(query.Remove)
 			if err != nil {
 				logger.Logger.Debug("remove regexp compile failed", zap.Error(err))
-				return nil, errors.New("remove 参数非法: " + err.Error())
+				return nil, NewRegexInvalidError("remove", err)
 			}
 
 			if removeReg.MatchString(proxyList[i].Name) {
@@ -227,7 +226,7 @@ func BuildSub(clashType model.ClashType, query model.SubConfig, template string,
 			replaceReg, err := regexp.Compile(v)
 			if err != nil {
 				logger.Logger.Debug("replace regexp compile failed", zap.Error(err))
-				return nil, errors.New("replace 参数非法: " + err.Error())
+				return nil, NewRegexInvalidError("replace", err)
 			}
 			replaceRegs = append(replaceRegs, replaceReg)
 		}
@@ -312,15 +311,15 @@ func FetchSubscriptionUserInfo(url string, userAgent string, retryTimes int) (st
 	resp, err := client.R().SetHeader("User-Agent", userAgent).Head(url)
 	if err != nil {
 		logger.Logger.Debug("创建 HEAD 请求失败", zap.Error(err))
-		return "", err
+		return "", NewNetworkRequestError(url, err)
 	}
 	defer resp.Body.Close()
 	if userInfo := resp.Header().Get("subscription-userinfo"); userInfo != "" {
 		return userInfo, nil
 	}
 
-	logger.Logger.Debug("目标 URL 未返回 subscription-userinfo 头", zap.Error(err))
-	return "", err
+	logger.Logger.Debug("subscription-userinfo header not found in response")
+	return "", NewNetworkResponseError("subscription-userinfo header not found", nil)
 }
 
 func MergeSubAndTemplate(temp *model.Subscription, sub *model.Subscription, igcg bool) {

@@ -2,9 +2,9 @@ package database
 
 import (
 	"encoding/json"
-	"errors"
 	"path/filepath"
 
+	"github.com/bestnite/sub2clash/common"
 	"github.com/bestnite/sub2clash/model"
 
 	"go.etcd.io/bbolt"
@@ -17,13 +17,16 @@ func ConnectDB() error {
 
 	db, err := bbolt.Open(path, 0600, nil)
 	if err != nil {
-		return err
+		return common.NewDatabaseConnectError(err)
 	}
 	DB = db
 
 	return db.Update(func(tx *bbolt.Tx) error {
 		_, err := tx.CreateBucketIfNotExists([]byte("ShortLinks"))
-		return err
+		if err != nil {
+			return common.NewDatabaseConnectError(err)
+		}
+		return nil
 	})
 }
 
@@ -33,7 +36,7 @@ func FindShortLinkByHash(hash string) (*model.ShortLink, error) {
 		b := tx.Bucket([]byte("ShortLinks"))
 		v := b.Get([]byte(hash))
 		if v == nil {
-			return errors.New("ShortLink not found")
+			return common.NewRecordNotFoundError("ShortLink", hash)
 		}
 		return json.Unmarshal(v, &shortLink)
 	})

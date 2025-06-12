@@ -1,7 +1,6 @@
 package common
 
 import (
-	"errors"
 	"os"
 )
 
@@ -18,13 +17,13 @@ func MKDir(dir string) error {
 
 func MkEssentialDir() error {
 	if err := MKDir("subs"); err != nil {
-		return errors.New("create subs dir failed" + err.Error())
+		return NewDirCreationError("subs", err)
 	}
 	if err := MKDir("logs"); err != nil {
-		return errors.New("create logs dir failed" + err.Error())
+		return NewDirCreationError("logs", err)
 	}
 	if err := MKDir("data"); err != nil {
-		return errors.New("create data dir failed" + err.Error())
+		return NewDirCreationError("data", err)
 	}
 	return nil
 }

@@ -1,4 +1,4 @@
-package error
+package parser
 
 type ParseError struct {
 	Type    ParseErrorType

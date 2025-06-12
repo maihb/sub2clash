@@ -4,7 +4,6 @@ import (
 	"strings"
 	"sync"
 
-	E "github.com/bestnite/sub2clash/error"
 	P "github.com/bestnite/sub2clash/model/proxy"
 )
 
@@ -65,7 +64,7 @@ func GetAllParsers() map[string]ProxyParser {
 func ParseProxyWithRegistry(proxy string) (P.Proxy, error) {
 	proxy = strings.TrimSpace(proxy)
 	if proxy == "" {
-		return P.Proxy{}, &E.ParseError{Type: E.ErrInvalidStruct, Raw: proxy, Message: "empty proxy string"}
+		return P.Proxy{}, &ParseError{Type: ErrInvalidStruct, Raw: proxy, Message: "empty proxy string"}
 	}
 
 	// 查找匹配的解析器
@@ -75,5 +74,5 @@ func ParseProxyWithRegistry(proxy string) (P.Proxy, error) {
 		}
 	}
 
-	return P.Proxy{}, &E.ParseError{Type: E.ErrInvalidPrefix, Raw: proxy, Message: "unsupported protocol"}
+	return P.Proxy{}, &ParseError{Type: ErrInvalidPrefix, Raw: proxy, Message: "unsupported protocol"}
 }
