@@ -68,23 +68,45 @@ func (p *SocksParser) Parse(proxy string) (P.Proxy, error) {
 	}
 	remarks = strings.TrimSpace(remarks)
 
-	encodeStr := link.User.Username()
 	var username, password string
-	if encodeStr != "" {
-		decodeStr, err := DecodeBase64(encodeStr)
-		splitStr := strings.Split(decodeStr, ":")
-		if err != nil {
-			return P.Proxy{}, &ParseError{
-				Type:    ErrInvalidStruct,
-				Message: "url parse error",
-				Raw:     proxy,
+
+	username = link.User.Username()
+	password, hasPassword := link.User.Password()
+
+	if !hasPassword && isLikelyBase64(username) {
+		decodedStr, err := DecodeBase64(username)
+		if err == nil {
+			usernameAndPassword := strings.SplitN(decodedStr, ":", 2)
+			if len(usernameAndPassword) == 2 {
+				username, err = url.QueryUnescape(usernameAndPassword[0])
+				if err != nil {
+					return P.Proxy{}, &ParseError{
+						Type:    ErrInvalidStruct,
+						Message: "invalid username",
+						Raw:     proxy,
+					}
+				}
+				password, err = url.QueryUnescape(usernameAndPassword[1])
+				if err != nil {
+					return P.Proxy{}, &ParseError{
+						Type:    ErrInvalidStruct,
+						Message: "invalid password",
+						Raw:     proxy,
+					}
+				}
+			} else {
+				username, err = url.QueryUnescape(decodedStr)
+				if err != nil {
+					return P.Proxy{}, &ParseError{
+						Type:    ErrInvalidStruct,
+						Message: "invalid username",
+						Raw:     proxy,
+					}
+				}
 			}
 		}
-		username = splitStr[0]
-		if len(splitStr) == 2 {
-			password = splitStr[1]
-		}
 	}
+
 	return P.Proxy{
 		Type: p.GetType(),
 		Name: remarks,
@@ -95,7 +117,6 @@ func (p *SocksParser) Parse(proxy string) (P.Proxy, error) {
 			Password: password,
 		},
 	}, nil
-
 }
 
 func init() {

@@ -92,19 +92,35 @@ func (p *ShadowsocksParser) Parse(proxy string) (P.Proxy, error) {
 	}
 
 	method := link.User.Username()
-	password, _ := link.User.Password()
+	password, hasPassword := link.User.Password()
 
-	if password == "" {
-		user, err := DecodeBase64(method)
+	if !hasPassword && isLikelyBase64(method) {
+		decodedStr, err := DecodeBase64(method)
 		if err == nil {
-			methodAndPass := strings.SplitN(user, ":", 2)
+			methodAndPass := strings.SplitN(decodedStr, ":", 2)
 			if len(methodAndPass) == 2 {
-				method = methodAndPass[0]
-				password = methodAndPass[1]
+				method, err = url.QueryUnescape(methodAndPass[0])
+				if err != nil {
+					return P.Proxy{}, &ParseError{
+						Type:    ErrInvalidStruct,
+						Message: "invalid method",
+						Raw:     proxy,
+					}
+				}
+				password, err = url.QueryUnescape(methodAndPass[1])
+				if err != nil {
+					return P.Proxy{}, &ParseError{
+						Type:    ErrInvalidStruct,
+						Message: "invalid password",
+						Raw:     proxy,
+					}
+				}
+			} else {
+				method = decodedStr
 			}
 		}
 	}
-	if isLikelyBase64(password) {
+	if password != "" && isLikelyBase64(password) {
 		password, err = DecodeBase64(password)
 		if err != nil {
 			return P.Proxy{}, &ParseError{
