@@ -2,6 +2,7 @@ package parser
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/url"
 	"strconv"
 	"strings"
@@ -47,7 +48,7 @@ func (p *VmessParser) GetType() string {
 
 func (p *VmessParser) Parse(proxy string) (P.Proxy, error) {
 	if !hasPrefix(proxy, p.GetPrefixes()) {
-		return P.Proxy{}, &ParseError{Type: ErrInvalidPrefix, Raw: proxy}
+		return P.Proxy{}, fmt.Errorf("%w: %s", ErrInvalidPrefix, proxy)
 	}
 
 	for _, prefix := range p.GetPrefixes() {
@@ -58,13 +59,13 @@ func (p *VmessParser) Parse(proxy string) (P.Proxy, error) {
 	}
 	base64, err := DecodeBase64(proxy)
 	if err != nil {
-		return P.Proxy{}, &ParseError{Type: ErrInvalidBase64, Raw: proxy, Message: err.Error()}
+		return P.Proxy{}, fmt.Errorf("%w: %s", ErrInvalidBase64, err.Error())
 	}
 
 	var vmess VmessJson
 	err = json.Unmarshal([]byte(base64), &vmess)
 	if err != nil {
-		return P.Proxy{}, &ParseError{Type: ErrInvalidStruct, Raw: proxy, Message: err.Error()}
+		return P.Proxy{}, fmt.Errorf("%w: %s", ErrInvalidStruct, err.Error())
 	}
 
 	var port int
@@ -72,11 +73,7 @@ func (p *VmessParser) Parse(proxy string) (P.Proxy, error) {
 	case string:
 		port, err = ParsePort(vmess.Port.(string))
 		if err != nil {
-			return P.Proxy{}, &ParseError{
-				Type:    ErrInvalidPort,
-				Message: err.Error(),
-				Raw:     proxy,
-			}
+			return P.Proxy{}, fmt.Errorf("%w: %s", ErrInvalidPort, err.Error())
 		}
 	case float64:
 		port = int(vmess.Port.(float64))
@@ -87,7 +84,7 @@ func (p *VmessParser) Parse(proxy string) (P.Proxy, error) {
 	case string:
 		aid, err = strconv.Atoi(vmess.Aid.(string))
 		if err != nil {
-			return P.Proxy{}, &ParseError{Type: ErrInvalidStruct, Raw: proxy, Message: err.Error()}
+			return P.Proxy{}, fmt.Errorf("%w: %s", ErrInvalidStruct, err.Error())
 		}
 	case float64:
 		aid = int(vmess.Aid.(float64))

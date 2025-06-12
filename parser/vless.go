@@ -28,39 +28,27 @@ func (p *VlessParser) GetType() string {
 
 func (p *VlessParser) Parse(proxy string) (P.Proxy, error) {
 	if !hasPrefix(proxy, p.GetPrefixes()) {
-		return P.Proxy{}, &ParseError{Type: ErrInvalidPrefix, Raw: proxy}
+		return P.Proxy{}, fmt.Errorf("%w: %s", ErrInvalidPrefix, proxy)
 	}
 
 	link, err := url.Parse(proxy)
 	if err != nil {
-		return P.Proxy{}, &ParseError{
-			Type:    ErrInvalidStruct,
-			Message: "url parse error",
-			Raw:     proxy,
-		}
+		return P.Proxy{}, fmt.Errorf("%w: %s", ErrInvalidStruct, err.Error())
 	}
 
 	server := link.Hostname()
 	if server == "" {
-		return P.Proxy{}, &ParseError{
-			Type:    ErrInvalidStruct,
-			Message: "missing server host",
-			Raw:     proxy,
-		}
+		return P.Proxy{}, fmt.Errorf("%w: %s", ErrInvalidStruct, "missing server host")
 	}
 	portStr := link.Port()
 	port, err := ParsePort(portStr)
 	if err != nil {
-		return P.Proxy{}, &ParseError{
-			Type:    ErrInvalidPort,
-			Message: err.Error(),
-			Raw:     proxy,
-		}
+		return P.Proxy{}, fmt.Errorf("%w: %s", ErrInvalidPort, err.Error())
 	}
 
 	query := link.Query()
 	uuid := link.User.Username()
-	flow, security, alpnStr, sni, insecure, fp, pbk, sid, path, host, serviceName, _type := query.Get("flow"), query.Get("security"), query.Get("alpn"), query.Get("sni"), query.Get("allowInsecure"), query.Get("fp"), query.Get("pbk"), query.Get("sid"), query.Get("path"), query.Get("host"), query.Get("serviceName"), query.Get("type")
+	flow, security, alpnStr, sni, insecure, fp, pbk, sid, path, host, serviceName, _type, udp := query.Get("flow"), query.Get("security"), query.Get("alpn"), query.Get("sni"), query.Get("allowInsecure"), query.Get("fp"), query.Get("pbk"), query.Get("sid"), query.Get("path"), query.Get("host"), query.Get("serviceName"), query.Get("type"), query.Get("udp")
 
 	insecureBool := insecure == "1"
 	var alpn []string
@@ -80,13 +68,15 @@ func (p *VlessParser) Parse(proxy string) (P.Proxy, error) {
 		Port:   port,
 		UUID:   uuid,
 		Flow:   flow,
+		UDP:    udp == "true",
 	}
 
 	if security == "tls" {
 		result.TLS = true
 		result.ALPN = alpn
 		result.SkipCertVerify = insecureBool
-		result.ClientFingerprint = fp
+		result.Fingerprint = fp
+		result.ServerName = sni
 	}
 
 	if security == "reality" {
@@ -96,7 +86,7 @@ func (p *VlessParser) Parse(proxy string) (P.Proxy, error) {
 			PublicKey: pbk,
 			ShortID:   sid,
 		}
-		result.ClientFingerprint = fp
+		result.Fingerprint = fp
 	}
 
 	if _type == "ws" {
@@ -125,11 +115,7 @@ func (p *VlessParser) Parse(proxy string) (P.Proxy, error) {
 
 		hosts, err := url.QueryUnescape(host)
 		if err != nil {
-			return P.Proxy{}, &ParseError{
-				Type:    ErrCannotParseParams,
-				Raw:     proxy,
-				Message: err.Error(),
-			}
+			return P.Proxy{}, fmt.Errorf("%w: %s", ErrCannotParseParams, err.Error())
 		}
 		result.Network = "http"
 		if hosts != "" {

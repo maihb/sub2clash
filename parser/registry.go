@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"fmt"
 	"strings"
 	"sync"
 
@@ -66,7 +67,7 @@ func GetAllPrefixes() []string {
 func ParseProxyWithRegistry(proxy string) (P.Proxy, error) {
 	proxy = strings.TrimSpace(proxy)
 	if proxy == "" {
-		return P.Proxy{}, &ParseError{Type: ErrInvalidStruct, Raw: proxy, Message: "empty proxy string"}
+		return P.Proxy{}, fmt.Errorf("%w: %s", ErrInvalidStruct, "empty proxy string")
 	}
 
 	for prefix, parser := range registry.parsers {
@@ -75,5 +76,5 @@ func ParseProxyWithRegistry(proxy string) (P.Proxy, error) {
 		}
 	}
 
-	return P.Proxy{}, &ParseError{Type: ErrInvalidPrefix, Raw: proxy, Message: "unsupported protocol"}
+	return P.Proxy{}, fmt.Errorf("%w: %s", ErrInvalidPrefix, "unsupported protocol")
 }

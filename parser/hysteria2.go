@@ -28,16 +28,12 @@ func (p *Hysteria2Parser) GetType() string {
 
 func (p *Hysteria2Parser) Parse(proxy string) (P.Proxy, error) {
 	if !hasPrefix(proxy, p.GetPrefixes()) {
-		return P.Proxy{}, &ParseError{Type: ErrInvalidPrefix, Raw: proxy}
+		return P.Proxy{}, fmt.Errorf("%w: %s", ErrInvalidPrefix, proxy)
 	}
 
 	link, err := url.Parse(proxy)
 	if err != nil {
-		return P.Proxy{}, &ParseError{
-			Type:    ErrInvalidStruct,
-			Message: "url parse error",
-			Raw:     proxy,
-		}
+		return P.Proxy{}, fmt.Errorf("%w: %s", ErrInvalidStruct, err.Error())
 	}
 
 	username := link.User.Username()
@@ -49,26 +45,15 @@ func (p *Hysteria2Parser) Parse(proxy string) (P.Proxy, error) {
 	query := link.Query()
 	server := link.Hostname()
 	if server == "" {
-		return P.Proxy{}, &ParseError{
-			Type:    ErrInvalidStruct,
-			Message: "missing server host",
-			Raw:     proxy,
-		}
+		return P.Proxy{}, fmt.Errorf("%w: %s", ErrInvalidStruct, "missing server host")
 	}
 	portStr := link.Port()
 	if portStr == "" {
-		return P.Proxy{}, &ParseError{
-			Type:    ErrInvalidStruct,
-			Message: "missing server port",
-			Raw:     proxy,
-		}
+		return P.Proxy{}, fmt.Errorf("%w: %s", ErrInvalidStruct, "missing server port")
 	}
 	port, err := ParsePort(portStr)
 	if err != nil {
-		return P.Proxy{}, &ParseError{
-			Type: ErrInvalidPort,
-			Raw:  portStr,
-		}
+		return P.Proxy{}, fmt.Errorf("%w: %s", ErrInvalidPort, err.Error())
 	}
 	obfs, obfsPassword, insecure, sni := query.Get("obfs"), query.Get("obfs-password"), query.Get("insecure"), query.Get("sni")
 	insecureBool := insecure == "1"

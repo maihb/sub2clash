@@ -1,11 +1,5 @@
 package parser
 
-type ParseError struct {
-	Type    ParseErrorType
-	Message string
-	Raw     string
-}
-
 type ParseErrorType string
 
 const (
@@ -16,9 +10,6 @@ const (
 	ErrInvalidBase64     ParseErrorType = "invalid base64"
 )
 
-func (e *ParseError) Error() string {
-	if e.Message != "" {
-		return string(e.Type) + ": " + e.Message + " \"" + e.Raw + "\""
-	}
-	return string(e.Type)
+func (e ParseErrorType) Error() string {
+	return string(e)
 }

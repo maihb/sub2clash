@@ -27,39 +27,24 @@ func (p *SocksParser) GetType() string {
 
 func (p *SocksParser) Parse(proxy string) (P.Proxy, error) {
 	if !hasPrefix(proxy, p.GetPrefixes()) {
-		return P.Proxy{}, &ParseError{Type: ErrInvalidPrefix, Raw: proxy}
+		return P.Proxy{}, fmt.Errorf("%w: %s", ErrInvalidPrefix, proxy)
 	}
 
 	link, err := url.Parse(proxy)
 	if err != nil {
-		return P.Proxy{}, &ParseError{
-			Type:    ErrInvalidStruct,
-			Message: "url parse error",
-			Raw:     proxy,
-		}
+		return P.Proxy{}, fmt.Errorf("%w: %s", ErrInvalidStruct, err.Error())
 	}
 	server := link.Hostname()
 	if server == "" {
-		return P.Proxy{}, &ParseError{
-			Type:    ErrInvalidStruct,
-			Message: "missing server host",
-			Raw:     proxy,
-		}
+		return P.Proxy{}, fmt.Errorf("%w: %s", ErrInvalidStruct, "missing server host")
 	}
 	portStr := link.Port()
 	if portStr == "" {
-		return P.Proxy{}, &ParseError{
-			Type:    ErrInvalidStruct,
-			Message: "missing server port",
-			Raw:     proxy,
-		}
+		return P.Proxy{}, fmt.Errorf("%w: %s", ErrInvalidStruct, "missing server port")
 	}
 	port, err := ParsePort(portStr)
 	if err != nil {
-		return P.Proxy{}, &ParseError{
-			Type: ErrInvalidPort,
-			Raw:  portStr,
-		}
+		return P.Proxy{}, fmt.Errorf("%w: %s", ErrInvalidPort, err.Error())
 	}
 
 	remarks := link.Fragment
@@ -86,6 +71,8 @@ func (p *SocksParser) Parse(proxy string) (P.Proxy, error) {
 		}
 	}
 
+	tls, udp := link.Query().Get("tls"), link.Query().Get("udp")
+
 	return P.Proxy{
 		Type: p.GetType(),
 		Name: remarks,
@@ -94,6 +81,8 @@ func (p *SocksParser) Parse(proxy string) (P.Proxy, error) {
 			Port:     port,
 			UserName: username,
 			Password: password,
+			TLS:      tls == "true",
+			UDP:      udp == "true",
 		},
 	}, nil
 }

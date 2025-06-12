@@ -32,7 +32,7 @@ func (p *ShadowsocksParser) GetType() string {
 // Parse 解析Shadowsocks代理
 func (p *ShadowsocksParser) Parse(proxy string) (P.Proxy, error) {
 	if !hasPrefix(proxy, p.GetPrefixes()) {
-		return P.Proxy{}, &ParseError{Type: ErrInvalidPrefix, Raw: proxy}
+		return P.Proxy{}, fmt.Errorf("%w: %s", ErrInvalidPrefix, proxy)
 	}
 
 	if !strings.Contains(proxy, "@") {
@@ -45,11 +45,7 @@ func (p *ShadowsocksParser) Parse(proxy string) (P.Proxy, error) {
 		}
 		d, err := DecodeBase64(s[0])
 		if err != nil {
-			return P.Proxy{}, &ParseError{
-				Type:    ErrInvalidStruct,
-				Message: "url parse error",
-				Raw:     proxy,
-			}
+			return P.Proxy{}, fmt.Errorf("%w: %s", ErrInvalidStruct, err.Error())
 		}
 		if len(s) == 2 {
 			proxy = "ss://" + d + "#" + s[1]
@@ -59,36 +55,21 @@ func (p *ShadowsocksParser) Parse(proxy string) (P.Proxy, error) {
 	}
 	link, err := url.Parse(proxy)
 	if err != nil {
-		return P.Proxy{}, &ParseError{
-			Type:    ErrInvalidStruct,
-			Message: "url parse error",
-			Raw:     proxy,
-		}
+		return P.Proxy{}, fmt.Errorf("%w: %s", ErrInvalidStruct, err.Error())
 	}
 
 	server := link.Hostname()
 	if server == "" {
-		return P.Proxy{}, &ParseError{
-			Type:    ErrInvalidStruct,
-			Message: "missing server host",
-			Raw:     proxy,
-		}
+		return P.Proxy{}, fmt.Errorf("%w: %s", ErrInvalidStruct, "missing server host")
 	}
 
 	portStr := link.Port()
 	if portStr == "" {
-		return P.Proxy{}, &ParseError{
-			Type:    ErrInvalidStruct,
-			Message: "missing server port",
-			Raw:     proxy,
-		}
+		return P.Proxy{}, fmt.Errorf("%w: %s", ErrInvalidStruct, "missing server port")
 	}
 	port, err := ParsePort(portStr)
 	if err != nil {
-		return P.Proxy{}, &ParseError{
-			Type: ErrInvalidStruct,
-			Raw:  proxy,
-		}
+		return P.Proxy{}, fmt.Errorf("%w: %s", ErrInvalidStruct, err.Error())
 	}
 
 	method := link.User.Username()
@@ -109,11 +90,7 @@ func (p *ShadowsocksParser) Parse(proxy string) (P.Proxy, error) {
 	if password != "" && isLikelyBase64(password) {
 		password, err = DecodeBase64(password)
 		if err != nil {
-			return P.Proxy{}, &ParseError{
-				Type:    ErrInvalidStruct,
-				Message: "password decode error",
-				Raw:     proxy,
-			}
+			return P.Proxy{}, fmt.Errorf("%w: %s", ErrInvalidStruct, err.Error())
 		}
 	}
 

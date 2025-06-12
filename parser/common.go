@@ -6,9 +6,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/bestnite/sub2clash/logger"
 	P "github.com/bestnite/sub2clash/model/proxy"
-	"go.uber.org/zap"
 )
 
 func hasPrefix(proxy string, prefixes []string) bool {
@@ -65,7 +63,7 @@ func DecodeBase64(s string) (string, error) {
 	return string(decodeStr), nil
 }
 
-func ParseProxies(proxies ...string) []P.Proxy {
+func ParseProxies(proxies ...string) ([]P.Proxy, error) {
 	var result []P.Proxy
 	for _, proxy := range proxies {
 		if proxy != "" {
@@ -73,15 +71,11 @@ func ParseProxies(proxies ...string) []P.Proxy {
 			var err error
 
 			proxyItem, err = ParseProxyWithRegistry(proxy)
-
-			if err == nil {
-				result = append(result, proxyItem)
-			} else {
-				logger.Logger.Debug(
-					"parse proxy failed", zap.String("proxy", proxy), zap.Error(err),
-				)
+			if err != nil {
+				return nil, err
 			}
+			result = append(result, proxyItem)
 		}
 	}
-	return result
+	return result, nil
 }

@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"fmt"
 	"net/url"
 	"strconv"
 	"strings"
@@ -28,7 +29,7 @@ func (p *ShadowsocksRParser) GetType() string {
 
 func (p *ShadowsocksRParser) Parse(proxy string) (P.Proxy, error) {
 	if !hasPrefix(proxy, p.GetPrefixes()) {
-		return P.Proxy{}, &ParseError{Type: ErrInvalidPrefix, Raw: proxy}
+		return P.Proxy{}, fmt.Errorf("%w: %s", ErrInvalidPrefix, proxy)
 	}
 
 	for _, prefix := range p.GetPrefixes() {
@@ -40,32 +41,27 @@ func (p *ShadowsocksRParser) Parse(proxy string) (P.Proxy, error) {
 
 	proxy, err := DecodeBase64(proxy)
 	if err != nil {
-		return P.Proxy{}, &ParseError{
-			Type: ErrInvalidBase64,
-			Raw:  proxy,
-		}
+		return P.Proxy{}, fmt.Errorf("%w: %s", ErrInvalidBase64, err.Error())
 	}
 	serverInfoAndParams := strings.SplitN(proxy, "/?", 2)
-	parts := strings.Split(serverInfoAndParams[0], ":")
+	if len(serverInfoAndParams) != 2 {
+		return P.Proxy{}, fmt.Errorf("%w: %s", ErrInvalidStruct, proxy)
+	}
+	parts := SplitNRight(serverInfoAndParams[0], ":", 6)
+	if len(parts) < 6 {
+		return P.Proxy{}, fmt.Errorf("%w: %s", ErrInvalidStruct, proxy)
+	}
 	server := parts[0]
 	protocol := parts[2]
 	method := parts[3]
 	obfs := parts[4]
 	password, err := DecodeBase64(parts[5])
 	if err != nil {
-		return P.Proxy{}, &ParseError{
-			Type:    ErrInvalidStruct,
-			Raw:     proxy,
-			Message: err.Error(),
-		}
+		return P.Proxy{}, fmt.Errorf("%w: %s", ErrInvalidStruct, err.Error())
 	}
 	port, err := ParsePort(parts[1])
 	if err != nil {
-		return P.Proxy{}, &ParseError{
-			Type:    ErrInvalidPort,
-			Message: err.Error(),
-			Raw:     proxy,
-		}
+		return P.Proxy{}, fmt.Errorf("%w: %s", ErrInvalidPort, err.Error())
 	}
 
 	var obfsParam string
@@ -74,11 +70,7 @@ func (p *ShadowsocksRParser) Parse(proxy string) (P.Proxy, error) {
 	if len(serverInfoAndParams) == 2 {
 		params, err := url.ParseQuery(serverInfoAndParams[1])
 		if err != nil {
-			return P.Proxy{}, &ParseError{
-				Type:    ErrCannotParseParams,
-				Raw:     proxy,
-				Message: err.Error(),
-			}
+			return P.Proxy{}, fmt.Errorf("%w: %s", ErrCannotParseParams, err.Error())
 		}
 		if params.Get("obfsparam") != "" {
 			obfsParam, err = DecodeBase64(params.Get("obfsparam"))
@@ -92,11 +84,7 @@ func (p *ShadowsocksRParser) Parse(proxy string) (P.Proxy, error) {
 			remarks = server + ":" + strconv.Itoa(port)
 		}
 		if err != nil {
-			return P.Proxy{}, &ParseError{
-				Type:    ErrInvalidStruct,
-				Raw:     proxy,
-				Message: err.Error(),
-			}
+			return P.Proxy{}, fmt.Errorf("%w: %s", ErrInvalidStruct, err.Error())
 		}
 	}
 
@@ -120,4 +108,27 @@ func (p *ShadowsocksRParser) Parse(proxy string) (P.Proxy, error) {
 
 func init() {
 	RegisterParser(&ShadowsocksRParser{})
+}
+
+func SplitNRight(s, sep string, n int) []string {
+	if n <= 0 {
+		return nil
+	}
+	if n == 1 {
+		return []string{s}
+	}
+	parts := strings.Split(s, sep)
+	if len(parts) <= n {
+		return parts
+	}
+	result := make([]string, n)
+	for i, j := len(parts)-1, 0; i >= 0; i, j = i-1, j+1 {
+		if j < n-1 {
+			result[n-j-1] = parts[len(parts)-j-1]
+		} else {
+			result[0] = strings.Join(parts[:i+1], sep)
+			break
+		}
+	}
+	return result
 }

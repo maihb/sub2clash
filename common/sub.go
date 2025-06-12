@@ -154,7 +154,10 @@ func BuildSub(clashType model.ClashType, query model.SubConfig, template string,
 				return nil, NewRegexInvalidError("prefix", err)
 			}
 			if reg.Match(data) {
-				p := parser.ParseProxies(strings.Split(string(data), "\n")...)
+				p, err := parser.ParseProxies(strings.Split(string(data), "\n")...)
+				if err != nil {
+					return nil, err
+				}
 				newProxies = p
 			} else {
 				base64, err := parser.DecodeBase64(string(data))
@@ -166,7 +169,10 @@ func BuildSub(clashType model.ClashType, query model.SubConfig, template string,
 					)
 					return nil, NewSubscriptionParseError(err)
 				}
-				p := parser.ParseProxies(strings.Split(base64, "\n")...)
+				p, err := parser.ParseProxies(strings.Split(base64, "\n")...)
+				if err != nil {
+					return nil, err
+				}
 				newProxies = p
 			}
 		} else {
@@ -181,7 +187,11 @@ func BuildSub(clashType model.ClashType, query model.SubConfig, template string,
 	}
 
 	if len(query.Proxy) != 0 {
-		proxyList = append(proxyList, parser.ParseProxies(query.Proxies...)...)
+		p, err := parser.ParseProxies(query.Proxies...)
+		if err != nil {
+			return nil, err
+		}
+		proxyList = append(proxyList, p...)
 	}
 
 	for i := range proxyList {

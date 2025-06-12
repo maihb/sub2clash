@@ -28,43 +28,27 @@ func (p *TrojanParser) GetType() string {
 
 func (p *TrojanParser) Parse(proxy string) (P.Proxy, error) {
 	if !hasPrefix(proxy, p.GetPrefixes()) {
-		return P.Proxy{}, &ParseError{Type: ErrInvalidPrefix, Raw: proxy}
+		return P.Proxy{}, fmt.Errorf("%w: %s", ErrInvalidPrefix, proxy)
 	}
 
 	link, err := url.Parse(proxy)
 	if err != nil {
-		return P.Proxy{}, &ParseError{
-			Type:    ErrInvalidStruct,
-			Message: "url parse error",
-			Raw:     proxy,
-		}
+		return P.Proxy{}, fmt.Errorf("%w: %s", ErrInvalidStruct, err.Error())
 	}
 
 	password := link.User.Username()
 	server := link.Hostname()
 	if server == "" {
-		return P.Proxy{}, &ParseError{
-			Type:    ErrInvalidStruct,
-			Message: "missing server host",
-			Raw:     proxy,
-		}
+		return P.Proxy{}, fmt.Errorf("%w: %s", ErrInvalidStruct, "missing server host")
 	}
 	portStr := link.Port()
 	if portStr == "" {
-		return P.Proxy{}, &ParseError{
-			Type:    ErrInvalidStruct,
-			Message: "missing server port",
-			Raw:     proxy,
-		}
+		return P.Proxy{}, fmt.Errorf("%w: %s", ErrInvalidStruct, "missing server port")
 	}
 
 	port, err := ParsePort(portStr)
 	if err != nil {
-		return P.Proxy{}, &ParseError{
-			Type:    ErrInvalidPort,
-			Message: err.Error(),
-			Raw:     proxy,
-		}
+		return P.Proxy{}, fmt.Errorf("%w: %s", ErrInvalidPort, err.Error())
 	}
 
 	remarks := link.Fragment
@@ -74,7 +58,7 @@ func (p *TrojanParser) Parse(proxy string) (P.Proxy, error) {
 	remarks = strings.TrimSpace(remarks)
 
 	query := link.Query()
-	network, security, alpnStr, sni, pbk, sid, fp, path, host, serviceName := query.Get("type"), query.Get("security"), query.Get("alpn"), query.Get("sni"), query.Get("pbk"), query.Get("sid"), query.Get("fp"), query.Get("path"), query.Get("host"), query.Get("serviceName")
+	network, security, alpnStr, sni, pbk, sid, fp, path, host, serviceName, udp := query.Get("type"), query.Get("security"), query.Get("alpn"), query.Get("sni"), query.Get("pbk"), query.Get("sid"), query.Get("fp"), query.Get("path"), query.Get("host"), query.Get("serviceName"), query.Get("udp")
 
 	var alpn []string
 	if strings.Contains(alpnStr, ",") {
@@ -88,6 +72,7 @@ func (p *TrojanParser) Parse(proxy string) (P.Proxy, error) {
 		Port:     port,
 		Password: password,
 		Network:  network,
+		UDP:      udp == "true",
 	}
 
 	if security == "xtls" || security == "tls" {
