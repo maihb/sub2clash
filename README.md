@@ -86,11 +86,4 @@
 
 ## 贡献者
 
-<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
-<!-- prettier-ignore-start -->
-<!-- markdownlint-disable -->
-
-<!-- markdownlint-restore -->
-<!-- prettier-ignore-end -->
-
-<!-- ALL-CONTRIBUTORS-LIST:END -->
+![https://contrib.rocks/image?repo=bestnite/sub2clash](https://github.com/bestnite/sub2clash/graphs/contributors)
