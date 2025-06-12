@@ -80,13 +80,15 @@ func (p *AnytlsParser) Parse(proxy string) (P.Proxy, error) {
 	remarks = strings.TrimSpace(remarks)
 
 	result := P.Proxy{
-		Type:           p.GetType(),
-		Name:           remarks,
-		Server:         server,
-		Port:           port,
-		Password:       password,
-		Sni:            sni,
-		SkipCertVerify: insecureBool,
+		Type: p.GetType(),
+		Name: remarks,
+		Anytls: P.Anytls{
+			Server:         server,
+			Port:           port,
+			Password:       password,
+			Sni:            sni,
+			SkipCertVerify: insecureBool,
+		},
 	}
 	return result, nil
 }

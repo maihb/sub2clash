@@ -19,8 +19,6 @@ import (
 var staticFiles embed.FS
 
 func SetRoute(r *gin.Engine) {
-	r.Use(middleware.ZapLogger())
-
 	tpl, err := template.ParseFS(staticFiles, "static/*")
 	if err != nil {
 		log.Fatalf("Error parsing templates: %v", err)
@@ -42,10 +40,10 @@ func SetRoute(r *gin.Engine) {
 			)
 		},
 	)
-	r.GET("/clash", handler.SubHandler(model.Clash, config.GlobalConfig.ClashTemplate))
-	r.GET("/meta", handler.SubHandler(model.ClashMeta, config.GlobalConfig.MetaTemplate))
-	r.GET("/s/:hash", handler.GetRawConfHandler)
-	r.POST("/short", handler.GenerateLinkHandler)
-	r.PUT("/short", handler.UpdateLinkHandler)
-	r.GET("/short", handler.GetRawConfUriHandler)
+	r.GET("/clash", middleware.ZapLogger(), handler.SubHandler(model.Clash, config.GlobalConfig.ClashTemplate))
+	r.GET("/meta", middleware.ZapLogger(), handler.SubHandler(model.ClashMeta, config.GlobalConfig.MetaTemplate))
+	r.GET("/s/:hash", middleware.ZapLogger(), handler.GetRawConfHandler)
+	r.POST("/short", middleware.ZapLogger(), handler.GenerateLinkHandler)
+	r.PUT("/short", middleware.ZapLogger(), handler.UpdateLinkHandler)
+	r.GET("/short", middleware.ZapLogger(), handler.GetRawConfUriHandler)
 }

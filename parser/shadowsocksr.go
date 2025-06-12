@@ -102,16 +102,18 @@ func (p *ShadowsocksRParser) Parse(proxy string) (P.Proxy, error) {
 	}
 
 	result := P.Proxy{
-		Name:          remarks,
-		Type:          p.GetType(),
-		Server:        server,
-		Port:          port,
-		Protocol:      protocol,
-		Cipher:        method,
-		Obfs:          obfs,
-		Password:      password,
-		ObfsParam:     obfsParam,
-		ProtocolParam: protoParam,
+		Type: p.GetType(),
+		Name: remarks,
+		ShadowSocksR: P.ShadowSocksR{
+			Server:        server,
+			Port:          port,
+			Protocol:      protocol,
+			Cipher:        method,
+			Obfs:          obfs,
+			Password:      password,
+			ObfsParam:     obfsParam,
+			ProtocolParam: protoParam,
+		},
 	}
 
 	return result, nil

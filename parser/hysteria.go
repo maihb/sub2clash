@@ -89,18 +89,20 @@ func (p *HysteriaParser) Parse(proxy string) (P.Proxy, error) {
 	remarks = strings.TrimSpace(remarks)
 
 	result := P.Proxy{
-		Type:           p.GetType(),
-		Name:           remarks,
-		Server:         server,
-		Port:           port,
-		Up:             upmbps,
-		Down:           downmbps,
-		Auth:           auth,
-		Obfs:           obfs,
-		SkipCertVerify: insecureBool,
-		Alpn:           alpn,
-		Protocol:       protocol,
-		AllowInsecure:  insecureBool,
+		Type: p.GetType(),
+		Name: remarks,
+		Hysteria: P.Hysteria{
+			Server:         server,
+			Port:           port,
+			Up:             upmbps,
+			Down:           downmbps,
+			Auth:           auth,
+			Obfs:           obfs,
+			SkipCertVerify: insecureBool,
+			Alpn:           alpn,
+			Protocol:       protocol,
+			AllowInsecure:  insecureBool,
+		},
 	}
 	return result, nil
 }

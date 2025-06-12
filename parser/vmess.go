@@ -10,6 +10,24 @@ import (
 	P "github.com/bestnite/sub2clash/model/proxy"
 )
 
+type VmessJson struct {
+	V    any    `json:"v"`
+	Ps   string `json:"ps"`
+	Add  string `json:"add"`
+	Port any    `json:"port"`
+	Id   string `json:"id"`
+	Aid  any    `json:"aid"`
+	Scy  string `json:"scy"`
+	Net  string `json:"net"`
+	Type string `json:"type"`
+	Host string `json:"host"`
+	Path string `json:"path"`
+	Tls  string `json:"tls"`
+	Sni  string `json:"sni"`
+	Alpn string `json:"alpn"`
+	Fp   string `json:"fp"`
+}
+
 type VmessParser struct{}
 
 func (p *VmessParser) SupportClash() bool {
@@ -44,7 +62,7 @@ func (p *VmessParser) Parse(proxy string) (P.Proxy, error) {
 		return P.Proxy{}, &E.ParseError{Type: E.ErrInvalidBase64, Raw: proxy, Message: err.Error()}
 	}
 
-	var vmess P.VmessJson
+	var vmess VmessJson
 	err = json.Unmarshal([]byte(base64), &vmess)
 	if err != nil {
 		return P.Proxy{}, &E.ParseError{Type: E.ErrInvalidStruct, Raw: proxy, Message: err.Error()}
@@ -85,9 +103,7 @@ func (p *VmessParser) Parse(proxy string) (P.Proxy, error) {
 		name = vmess.Ps
 	}
 
-	result := P.Proxy{
-		Name:    name,
-		Type:    p.GetType(),
+	result := P.Vmess{
 		Server:  vmess.Add,
 		Port:    port,
 		UUID:    vmess.Id,
@@ -139,7 +155,11 @@ func (p *VmessParser) Parse(proxy string) (P.Proxy, error) {
 		result.Network = "h2"
 	}
 
-	return result, nil
+	return P.Proxy{
+		Type:  p.GetType(),
+		Name:  name,
+		Vmess: result,
+	}, nil
 }
 
 func init() {

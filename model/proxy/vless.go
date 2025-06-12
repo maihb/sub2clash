@@ -1,14 +1,12 @@
 package proxy
 
 type Vless struct {
-	Type              string            `yaml:"type"`
-	Name              string            `yaml:"name"`
 	Server            string            `yaml:"server"`
 	Port              int               `yaml:"port"`
 	UUID              string            `yaml:"uuid"`
 	Flow              string            `yaml:"flow,omitempty"`
 	TLS               bool              `yaml:"tls,omitempty"`
-	ALPN              []string          `yaml:"alpn,omitempty"`
+	Alpn              []string          `yaml:"alpn,omitempty"`
 	UDP               bool              `yaml:"udp,omitempty"`
 	PacketAddr        bool              `yaml:"packet-addr,omitempty"`
 	XUDP              bool              `yaml:"xudp,omitempty"`
@@ -25,43 +23,7 @@ type Vless struct {
 	Fingerprint       string            `yaml:"fingerprint,omitempty"`
 	ServerName        string            `yaml:"servername,omitempty"`
 	ClientFingerprint string            `yaml:"client-fingerprint,omitempty"`
-}
-
-func ProxyToVless(p Proxy) Vless {
-	return Vless{
-		Type:              "vless",
-		Name:              p.Name,
-		Server:            p.Server,
-		Port:              p.Port,
-		UUID:              p.UUID,
-		Flow:              p.Flow,
-		TLS:               p.TLS,
-		ALPN:              p.Alpn,
-		UDP:               p.UDP,
-		PacketAddr:        p.PacketAddr,
-		XUDP:              p.XUDP,
-		PacketEncoding:    p.PacketEncoding,
-		Network:           p.Network,
-		RealityOpts:       p.RealityOpts,
-		HTTPOpts:          p.HTTPOpts,
-		HTTP2Opts:         p.HTTP2Opts,
-		GrpcOpts:          p.GrpcOpts,
-		WSOpts:            p.WSOpts,
-		WSPath:            p.WSOpts.Path,
-		WSHeaders:         p.WSOpts.Headers,
-		SkipCertVerify:    p.SkipCertVerify,
-		Fingerprint:       p.Fingerprint,
-		ServerName:        p.Servername,
-		ClientFingerprint: p.ClientFingerprint,
-	}
-}
-
-type VlessMarshaler struct{}
-
-func (m *VlessMarshaler) GetType() string {
-	return "vless"
-}
-
-func (m *VlessMarshaler) MarshalProxy(p Proxy) (interface{}, error) {
-	return ProxyToVless(p), nil
+	Sni               string            `yaml:"sni,omitempty"`
+	AllowInsecure     bool              `yaml:"allow-insecure,omitempty"`
+	Servername        string            `yaml:"servername,omitempty"`
 }

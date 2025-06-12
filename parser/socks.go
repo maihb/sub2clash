@@ -87,12 +87,14 @@ func (p *SocksParser) Parse(proxy string) (P.Proxy, error) {
 		}
 	}
 	return P.Proxy{
-		Type:     p.GetType(),
-		Name:     remarks,
-		Server:   server,
-		Port:     port,
-		Username: username,
-		Password: password,
+		Type: p.GetType(),
+		Name: remarks,
+		Socks: P.Socks{
+			Server:   server,
+			Port:     port,
+			Username: username,
+			Password: password,
+		},
 	}, nil
 
 }

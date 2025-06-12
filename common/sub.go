@@ -190,10 +190,12 @@ func BuildSub(clashType model.ClashType, query model.SubConfig, template string,
 	proxies := make(map[string]*P.Proxy)
 	newProxies := make([]P.Proxy, 0, len(proxyList))
 	for i := range proxyList {
-		key := proxyList[i].Server + strconv.Itoa(proxyList[i].Port) + proxyList[i].Type + proxyList[i].UUID + proxyList[i].Password
-		if proxyList[i].Network == "ws" {
-			key += proxyList[i].WSOpts.Path + proxyList[i].WSOpts.Headers["Host"]
+		yamlBytes, err := yaml.Marshal(proxyList[i])
+		if err != nil {
+			logger.Logger.Debug("marshal proxy failed", zap.Error(err))
+			return nil, errors.New("marshal proxy failed: " + err.Error())
 		}
+		key := string(yamlBytes)
 		if _, exist := proxies[key]; !exist {
 			proxies[key] = &proxyList[i]
 			newProxies = append(newProxies, proxyList[i])

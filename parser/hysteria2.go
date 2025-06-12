@@ -81,17 +81,19 @@ func (p *Hysteria2Parser) Parse(proxy string) (P.Proxy, error) {
 	remarks = strings.TrimSpace(remarks)
 
 	result := P.Proxy{
-		Type:           p.GetType(),
-		Name:           remarks,
-		Server:         server,
-		Port:           port,
-		Password:       password,
-		Obfs:           obfs,
-		ObfsParam:      obfsPassword,
-		Sni:            sni,
-		SkipCertVerify: insecureBool,
-		TLS:            enableTLS,
-		Network:        network,
+		Type: p.GetType(),
+		Name: remarks,
+		Hysteria2: P.Hysteria2{
+			Server:         server,
+			Port:           port,
+			Password:       password,
+			Obfs:           obfs,
+			ObfsParam:      obfsPassword,
+			Sni:            sni,
+			SkipCertVerify: insecureBool,
+			TLS:            enableTLS,
+			Network:        network,
+		},
 	}
 	return result, nil
 }

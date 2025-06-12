@@ -1,8 +1,6 @@
 package proxy
 
 type Hysteria struct {
-	Type                string   `yaml:"type"`
-	Name                string   `yaml:"name"`
 	Server              string   `yaml:"server"`
 	Port                int      `yaml:"port,omitempty"`
 	Ports               string   `yaml:"ports,omitempty"`
@@ -19,7 +17,7 @@ type Hysteria struct {
 	SNI                 string   `yaml:"sni,omitempty"`
 	SkipCertVerify      bool     `yaml:"skip-cert-verify,omitempty"`
 	Fingerprint         string   `yaml:"fingerprint,omitempty"`
-	ALPN                []string `yaml:"alpn,omitempty"`
+	Alpn                []string `yaml:"alpn,omitempty"`
 	CustomCA            string   `yaml:"ca,omitempty"`
 	CustomCAString      string   `yaml:"ca-str,omitempty"`
 	ReceiveWindowConn   int      `yaml:"recv-window-conn,omitempty"`
@@ -27,42 +25,5 @@ type Hysteria struct {
 	DisableMTUDiscovery bool     `yaml:"disable-mtu-discovery,omitempty"`
 	FastOpen            bool     `yaml:"fast-open,omitempty"`
 	HopInterval         int      `yaml:"hop-interval,omitempty"`
-}
-
-func ProxyToHysteria(p Proxy) Hysteria {
-	return Hysteria{
-		Type:                "hysteria",
-		Name:                p.Name,
-		Server:              p.Server,
-		Port:                p.Port,
-		Ports:               p.Ports,
-		Protocol:            p.Protocol,
-		Up:                  p.Up,
-		Down:                p.Down,
-		Auth:                p.Auth,
-		AuthStringOLD:       p.AuthStringOLD,
-		AuthString:          p.AuthString,
-		Obfs:                p.Obfs,
-		SNI:                 p.Sni,
-		SkipCertVerify:      p.SkipCertVerify,
-		Fingerprint:         p.Fingerprint,
-		ALPN:                p.Alpn,
-		CustomCA:            p.CustomCA,
-		CustomCAString:      p.CustomCAString,
-		ReceiveWindowConn:   p.ReceiveWindowConn,
-		ReceiveWindow:       p.ReceiveWindow,
-		DisableMTUDiscovery: p.DisableMTUDiscovery,
-		FastOpen:            p.FastOpen,
-		HopInterval:         p.HopInterval,
-	}
-}
-
-type HysteriaMarshaler struct{}
-
-func (m *HysteriaMarshaler) GetType() string {
-	return "hysteria"
-}
-
-func (m *HysteriaMarshaler) MarshalProxy(p Proxy) (interface{}, error) {
-	return ProxyToHysteria(p), nil
+	AllowInsecure       bool     `yaml:"allow-insecure,omitempty"`
 }

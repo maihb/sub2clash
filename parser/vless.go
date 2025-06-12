@@ -76,10 +76,8 @@ func (p *VlessParser) Parse(proxy string) (P.Proxy, error) {
 	}
 	remarks = strings.TrimSpace(remarks)
 
-	result := P.Proxy{
-		Type:   p.GetType(),
+	result := P.Vless{
 		Server: server,
-		Name:   remarks,
 		Port:   port,
 		UUID:   uuid,
 		Flow:   flow,
@@ -141,7 +139,11 @@ func (p *VlessParser) Parse(proxy string) (P.Proxy, error) {
 		}
 	}
 
-	return result, nil
+	return P.Proxy{
+		Type:  p.GetType(),
+		Name:  remarks,
+		Vless: result,
+	}, nil
 }
 
 func init() {

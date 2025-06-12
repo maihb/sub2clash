@@ -123,12 +123,14 @@ func (p *ShadowsocksParser) Parse(proxy string) (P.Proxy, error) {
 	remarks = strings.TrimSpace(remarks)
 
 	result := P.Proxy{
-		Type:     p.GetType(),
-		Cipher:   method,
-		Password: password,
-		Server:   server,
-		Port:     port,
-		Name:     remarks,
+		Type: p.GetType(),
+		Name: remarks,
+		ShadowSocks: P.ShadowSocks{
+			Cipher:   method,
+			Password: password,
+			Server:   server,
+			Port:     port,
+		},
 	}
 
 	return result, nil

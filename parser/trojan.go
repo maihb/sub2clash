@@ -84,12 +84,10 @@ func (p *TrojanParser) Parse(proxy string) (P.Proxy, error) {
 		alpn = nil
 	}
 
-	result := P.Proxy{
-		Type:     p.GetType(),
+	result := P.Trojan{
 		Server:   server,
 		Port:     port,
 		Password: password,
-		Name:     remarks,
 		Network:  network,
 	}
 
@@ -125,7 +123,11 @@ func (p *TrojanParser) Parse(proxy string) (P.Proxy, error) {
 		}
 	}
 
-	return result, nil
+	return P.Proxy{
+		Type:   p.GetType(),
+		Name:   remarks,
+		Trojan: result,
+	}, nil
 }
 
 func init() {

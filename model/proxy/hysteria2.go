@@ -1,8 +1,6 @@
 package proxy
 
 type Hysteria2 struct {
-	Type           string   `yaml:"type"`
-	Name           string   `yaml:"name"`
 	Server         string   `yaml:"server"`
 	Port           int      `yaml:"port"`
 	Up             string   `yaml:"up,omitempty"`
@@ -17,35 +15,8 @@ type Hysteria2 struct {
 	CustomCA       string   `yaml:"ca,omitempty"`
 	CustomCAString string   `yaml:"ca-str,omitempty"`
 	CWND           int      `yaml:"cwnd,omitempty"`
-}
-
-func ProxyToHysteria2(p Proxy) Hysteria2 {
-	return Hysteria2{
-		Type:           "hysteria2",
-		Name:           p.Name,
-		Server:         p.Server,
-		Port:           p.Port,
-		Up:             p.Up,
-		Down:           p.Down,
-		Password:       p.Password,
-		Obfs:           p.Obfs,
-		ObfsPassword:   p.ObfsParam,
-		SNI:            p.Sni,
-		SkipCertVerify: p.SkipCertVerify,
-		Fingerprint:    p.Fingerprint,
-		ALPN:           p.Alpn,
-		CustomCA:       p.CustomCA,
-		CustomCAString: p.CustomCAString,
-		CWND:           p.CWND,
-	}
-}
-
-type Hysteria2Marshaler struct{}
-
-func (m *Hysteria2Marshaler) GetType() string {
-	return "hysteria2"
-}
-
-func (m *Hysteria2Marshaler) MarshalProxy(p Proxy) (interface{}, error) {
-	return ProxyToHysteria2(p), nil
+	ObfsParam      string   `yaml:"obfs-param,omitempty"`
+	Sni            string   `yaml:"sni,omitempty"`
+	TLS            bool     `yaml:"tls,omitempty"`
+	Network        string   `yaml:"network,omitempty"`
 }
