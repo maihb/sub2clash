@@ -5,6 +5,7 @@ import (
 	"errors"
 	"strconv"
 	"strings"
+	"unicode/utf8"
 
 	P "github.com/bestnite/sub2clash/model/proxy"
 )
@@ -32,8 +33,13 @@ func ParsePort(portStr string) (int, error) {
 	return port, nil
 }
 
+// isLikelyBase64 不严格判断是否是合法的 Base64, 很多分享链接不符合 Base64 规范
 func isLikelyBase64(s string) bool {
-	if len(s)%4 == 0 && !strings.Contains(strings.TrimSuffix(s, "="), "=") {
+	if strings.TrimSpace(s) == "" {
+		return false
+	}
+
+	if !strings.Contains(strings.TrimSuffix(s, "="), "=") {
 		s = strings.TrimSuffix(s, "=")
 		chars := "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
 		for _, c := range s {
@@ -41,17 +47,25 @@ func isLikelyBase64(s string) bool {
 				return false
 			}
 		}
-		return true
 	}
-	return false
+
+	decoded, err := DecodeBase64(s)
+	if err != nil {
+		return false
+	}
+	if !utf8.ValidString(decoded) {
+		return false
+	}
+
+	return true
 }
 
 func DecodeBase64(s string) (string, error) {
 	s = strings.TrimSpace(s)
 
 	if strings.Contains(s, "-") || strings.Contains(s, "_") {
-		s = strings.Replace(s, "-", "+", -1)
-		s = strings.Replace(s, "_", "/", -1)
+		s = strings.ReplaceAll(s, "-", "+")
+		s = strings.ReplaceAll(s, "_", "/")
 	}
 	if len(s)%4 != 0 {
 		s += strings.Repeat("=", 4-len(s)%4)
