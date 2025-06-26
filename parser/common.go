@@ -33,7 +33,7 @@ func ParsePort(portStr string) (int, error) {
 }
 
 func isLikelyBase64(s string) bool {
-	if len(s)%4 == 0 && strings.HasSuffix(s, "=") && !strings.Contains(strings.TrimSuffix(s, "="), "=") {
+	if len(s)%4 == 0 && !strings.Contains(strings.TrimSuffix(s, "="), "=") {
 		s = strings.TrimSuffix(s, "=")
 		chars := "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
 		for _, c := range s {
