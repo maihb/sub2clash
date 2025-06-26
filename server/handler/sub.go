@@ -27,10 +27,9 @@ func SubHandler(model M.ClashType, template string) func(c *gin.Context) {
 
 		if len(query.Subs) == 1 {
 			userInfoHeader, err := common.FetchSubscriptionUserInfo(query.Subs[0], "clash", config.GlobalConfig.RequestRetryTimes)
-			if err != nil {
-				c.String(http.StatusInternalServerError, err.Error())
+			if err == nil {
+				c.Header("subscription-userinfo", userInfoHeader)
 			}
-			c.Header("subscription-userinfo", userInfoHeader)
 		}
 
 		if query.NodeListMode {
