@@ -99,6 +99,13 @@ func (p *VmessParser) Parse(proxy string) (P.Proxy, error) {
 		name = vmess.Ps
 	}
 
+	var alpn []string
+	if strings.Contains(vmess.Alpn, ",") {
+		alpn = strings.Split(vmess.Alpn, ",")
+	} else {
+		alpn = nil
+	}
+
 	result := P.Vmess{
 		Server:  vmess.Add,
 		Port:    port,
@@ -107,17 +114,20 @@ func (p *VmessParser) Parse(proxy string) (P.Proxy, error) {
 		Cipher:  vmess.Scy,
 	}
 
-	if vmess.Tls == "tls" {
-		var alpn []string
-		if strings.Contains(vmess.Alpn, ",") {
-			alpn = strings.Split(vmess.Alpn, ",")
-		} else {
-			alpn = nil
-		}
-		result.TLS = true
-		result.Fingerprint = vmess.Fp
+	if len(alpn) > 0 {
 		result.ALPN = alpn
+	}
+
+	if vmess.Fp != "" {
+		result.ClientFingerprint = vmess.Fp
+	}
+
+	if vmess.Sni != "" {
 		result.ServerName = vmess.Sni
+	}
+
+	if vmess.Tls == "tls" {
+		result.TLS = true
 	}
 
 	if vmess.Net == "ws" {

@@ -58,7 +58,17 @@ func (p *TrojanParser) Parse(proxy string) (P.Proxy, error) {
 	remarks = strings.TrimSpace(remarks)
 
 	query := link.Query()
-	network, security, alpnStr, sni, pbk, sid, fp, path, host, serviceName, udp := query.Get("type"), query.Get("security"), query.Get("alpn"), query.Get("sni"), query.Get("pbk"), query.Get("sid"), query.Get("fp"), query.Get("path"), query.Get("host"), query.Get("serviceName"), query.Get("udp")
+	network, security, alpnStr, sni, pbk, sid, fp, path, host, serviceName, udp, insecure := query.Get("type"), query.Get("security"), query.Get("alpn"), query.Get("sni"), query.Get("pbk"), query.Get("sid"), query.Get("fp"), query.Get("path"), query.Get("host"), query.Get("serviceName"), query.Get("udp"), query.Get("allowInsecure")
+
+	insecureBool := insecure == "1"
+	result := P.Trojan{
+		Server:         server,
+		Port:           port,
+		Password:       password,
+		Network:        network,
+		UDP:            udp == "true",
+		SkipCertVerify: insecureBool,
+	}
 
 	var alpn []string
 	if strings.Contains(alpnStr, ",") {
@@ -66,27 +76,23 @@ func (p *TrojanParser) Parse(proxy string) (P.Proxy, error) {
 	} else {
 		alpn = nil
 	}
-
-	result := P.Trojan{
-		Server:   server,
-		Port:     port,
-		Password: password,
-		Network:  network,
-		UDP:      udp == "true",
+	if len(alpn) > 0 {
+		result.ALPN = alpn
 	}
 
-	if security == "xtls" || security == "tls" {
-		result.ALPN = alpn
+	if fp != "" {
+		result.ClientFingerprint = fp
+	}
+
+	if sni != "" {
 		result.SNI = sni
 	}
 
 	if security == "reality" {
-		result.SNI = sni
 		result.RealityOpts = P.RealityOptions{
 			PublicKey: pbk,
 			ShortID:   sid,
 		}
-		result.Fingerprint = fp
 	}
 
 	if network == "ws" {

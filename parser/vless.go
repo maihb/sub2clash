@@ -57,6 +57,7 @@ func (p *VlessParser) Parse(proxy string) (P.Proxy, error) {
 	} else {
 		alpn = nil
 	}
+
 	remarks := link.Fragment
 	if remarks == "" {
 		remarks = fmt.Sprintf("%s:%s", server, portStr)
@@ -64,29 +65,36 @@ func (p *VlessParser) Parse(proxy string) (P.Proxy, error) {
 	remarks = strings.TrimSpace(remarks)
 
 	result := P.Vless{
-		Server: server,
-		Port:   port,
-		UUID:   uuid,
-		Flow:   flow,
-		UDP:    udp == "true",
+		Server:         server,
+		Port:           port,
+		UUID:           uuid,
+		Flow:           flow,
+		UDP:            udp == "true",
+		SkipCertVerify: insecureBool,
+	}
+
+	if len(alpn) > 0 {
+		result.ALPN = alpn
+	}
+
+	if fp != "" {
+		result.ClientFingerprint = fp
+	}
+
+	if sni != "" {
+		result.ServerName = sni
 	}
 
 	if security == "tls" {
 		result.TLS = true
-		result.ALPN = alpn
-		result.SkipCertVerify = insecureBool
-		result.Fingerprint = fp
-		result.ServerName = sni
 	}
 
 	if security == "reality" {
 		result.TLS = true
-		result.ServerName = sni
 		result.RealityOpts = P.RealityOptions{
 			PublicKey: pbk,
 			ShortID:   sid,
 		}
-		result.Fingerprint = fp
 	}
 
 	if _type == "ws" {
