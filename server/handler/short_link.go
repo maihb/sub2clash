@@ -168,7 +168,7 @@ func GetRawConfHandler(c *gin.Context) {
 		return
 	}
 
-	response, err := http.Get(strings.TrimSuffix(config.GlobalConfig.Address, "/") + "/" + shortLink.Url)
+	response, err := http.Get("http://" + strings.TrimSuffix(config.GlobalConfig.Address, "/") + "/" + shortLink.Url)
 	if err != nil {
 		respondWithError(c, http.StatusInternalServerError, "请求错误: "+err.Error())
 		return
