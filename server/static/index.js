@@ -1,11 +1,9 @@
 function setInputReadOnly(input, readonly) {
   if (readonly) {
     input.readOnly = true;
-    input.classList.add('bg-light');
     input.style.cursor = 'not-allowed';
   } else {
     input.readOnly = false;
-    input.classList.remove('bg-light');
     input.style.cursor = 'auto';
   }
 }
