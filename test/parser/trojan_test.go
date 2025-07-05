@@ -21,7 +21,7 @@ func TestTrojan_Basic_SimpleLink(t *testing.T) {
 		},
 	}
 
-	result, err := p.Parse(input)
+	result, err := p.Parse(parser.ParseConfig{UseUDP: false}, input)
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 		return
@@ -46,7 +46,7 @@ func TestTrojan_Basic_WithTLS(t *testing.T) {
 		},
 	}
 
-	result, err := p.Parse(input)
+	result, err := p.Parse(parser.ParseConfig{UseUDP: false}, input)
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 		return
@@ -75,7 +75,7 @@ func TestTrojan_Basic_WithReality(t *testing.T) {
 		},
 	}
 
-	result, err := p.Parse(input)
+	result, err := p.Parse(parser.ParseConfig{UseUDP: false}, input)
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 		return
@@ -105,7 +105,7 @@ func TestTrojan_Basic_WithWebSocket(t *testing.T) {
 		},
 	}
 
-	result, err := p.Parse(input)
+	result, err := p.Parse(parser.ParseConfig{UseUDP: false}, input)
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 		return
@@ -132,7 +132,7 @@ func TestTrojan_Basic_WithGrpc(t *testing.T) {
 		},
 	}
 
-	result, err := p.Parse(input)
+	result, err := p.Parse(parser.ParseConfig{UseUDP: false}, input)
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 		return
@@ -145,7 +145,7 @@ func TestTrojan_Error_MissingServer(t *testing.T) {
 	p := &parser.TrojanParser{}
 	input := "trojan://password@:443"
 
-	_, err := p.Parse(input)
+	_, err := p.Parse(parser.ParseConfig{UseUDP: false}, input)
 	if err == nil {
 		t.Errorf("Expected error but got none")
 	}
@@ -155,7 +155,7 @@ func TestTrojan_Error_MissingPort(t *testing.T) {
 	p := &parser.TrojanParser{}
 	input := "trojan://password@127.0.0.1"
 
-	_, err := p.Parse(input)
+	_, err := p.Parse(parser.ParseConfig{UseUDP: false}, input)
 	if err == nil {
 		t.Errorf("Expected error but got none")
 	}
@@ -165,7 +165,7 @@ func TestTrojan_Error_InvalidPort(t *testing.T) {
 	p := &parser.TrojanParser{}
 	input := "trojan://password@127.0.0.1:99999"
 
-	_, err := p.Parse(input)
+	_, err := p.Parse(parser.ParseConfig{UseUDP: false}, input)
 	if err == nil {
 		t.Errorf("Expected error but got none")
 	}
@@ -175,7 +175,7 @@ func TestTrojan_Error_InvalidProtocol(t *testing.T) {
 	p := &parser.TrojanParser{}
 	input := "ss://example.com:8080"
 
-	_, err := p.Parse(input)
+	_, err := p.Parse(parser.ParseConfig{UseUDP: false}, input)
 	if err == nil {
 		t.Errorf("Expected error but got none")
 	}

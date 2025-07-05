@@ -32,6 +32,7 @@ type SubConfig struct {
 	NodeListMode        bool                 `form:"nodeList,default=false" binding:""`
 	IgnoreCountryGrooup bool                 `form:"ignoreCountryGroup,default=false" binding:""`
 	UserAgent           string               `form:"userAgent" binding:""`
+	UseUDP              bool                 `form:"useUDP,default=false" binding:""`
 }
 
 type RuleProviderStruct struct {

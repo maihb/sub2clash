@@ -46,7 +46,7 @@ func (p *VmessParser) GetType() string {
 	return "vmess"
 }
 
-func (p *VmessParser) Parse(proxy string) (P.Proxy, error) {
+func (p *VmessParser) Parse(config ParseConfig, proxy string) (P.Proxy, error) {
 	if !hasPrefix(proxy, p.GetPrefixes()) {
 		return P.Proxy{}, fmt.Errorf("%w: %s", ErrInvalidPrefix, proxy)
 	}
@@ -112,6 +112,7 @@ func (p *VmessParser) Parse(proxy string) (P.Proxy, error) {
 		UUID:    vmess.Id,
 		AlterID: aid,
 		Cipher:  vmess.Scy,
+		UDP:     config.UseUDP,
 	}
 
 	if len(alpn) > 0 {

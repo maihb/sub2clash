@@ -19,28 +19,29 @@ function clearExistingValues() {
   document.getElementById("autoTest").checked = false;
   document.getElementById("lazy").checked = false;
   document.getElementById("igcg").checked = false;
+  document.getElementById("useUDP").checked = false;
   document.getElementById("template").value = "";
   document.getElementById("sort").value = "nameasc";
   document.getElementById("remove").value = "";
   document.getElementById("apiLink").value = "";
   document.getElementById("apiShortLink").value = "";
-  
+
   // 恢复短链ID和密码输入框状态
   const customIdInput = document.getElementById("customId");
   const passwordInput = document.getElementById("password");
   const generateButton = document.querySelector('button[onclick="generateShortLink()"]');
-  
+
   customIdInput.value = "";
   setInputReadOnly(customIdInput, false);
-  
+
   passwordInput.value = "";
   setInputReadOnly(passwordInput, false);
-  
+
   // 恢复生成短链按钮状态
   generateButton.disabled = false;
   generateButton.classList.remove('btn-secondary');
   generateButton.classList.add('btn-primary');
-  
+
   document.getElementById("nodeList").checked = false;
 
   // 清除由 createRuleProvider, createReplace, 和 createRule 创建的所有额外输入组
@@ -110,6 +111,8 @@ function generateURI() {
   queryParams.push(`nodeList=${nodeList ? "true" : "false"}`);
   const igcg = document.getElementById("igcg").checked;
   queryParams.push(`ignoreCountryGroup=${igcg ? "true" : "false"}`);
+  const useUDP = document.getElementById("useUDP").checked;
+  queryParams.push(`useUDP=${useUDP ? "true" : "false"}`);
 
   // 获取模板链接或名称（如果存在）
   const template = document.getElementById("template").value;
@@ -216,28 +219,28 @@ async function parseInputURL() {
     try {
       const response = await axios.get("./short?" + q.toString());
       url = new URL(window.location.href + response.data);
-      
+
       // 回显配置链接
       const apiLinkInput = document.querySelector("#apiLink");
       apiLinkInput.value = `${window.location.origin}${window.location.pathname}${response.data}`;
       setInputReadOnly(apiLinkInput, true);
-      
+
       // 回显短链相关信息
       const apiShortLinkInput = document.querySelector("#apiShortLink");
       apiShortLinkInput.value = inputURL;
       setInputReadOnly(apiShortLinkInput, true);
-      
+
       // 设置短链ID和密码，并设置为只读
       const customIdInput = document.querySelector("#customId");
       const passwordInput = document.querySelector("#password");
       const generateButton = document.querySelector('button[onclick="generateShortLink()"]');
-      
+
       customIdInput.value = hash;
       setInputReadOnly(customIdInput, true);
-      
+
       passwordInput.value = password;
       setInputReadOnly(passwordInput, true);
-      
+
       // 禁用生成短链按钮
       generateButton.disabled = true;
       generateButton.classList.add('btn-secondary');
@@ -314,7 +317,7 @@ async function parseInputURL() {
   }
 
   if (params.has("ignoreCountryGroup")) {
-    document.getElementById("igcg").checked = 
+    document.getElementById("igcg").checked =
       params.get("ignoreCountryGroup") === "true";
   }
 
@@ -335,6 +338,11 @@ async function parseInputURL() {
   if (params.has("nodeList")) {
     document.getElementById("nodeList").checked =
       params.get("nodeList") === "true";
+  }
+
+  if (params.has("useUDP")) {
+    document.getElementById("useUDP").checked =
+      params.get("useUDP") === "true";
   }
 }
 
@@ -580,4 +588,53 @@ function updateShortLink() {
     });
 }
 
+
+// 主题切换功能
+function initTheme() {
+  const html = document.querySelector('html');
+  const themeIcon = document.getElementById('theme-icon');
+  let theme;
+
+  // 从localStorage获取用户偏好的主题
+  const savedTheme = localStorage.getItem('theme');
+
+  if (savedTheme) {
+    // 如果用户之前设置过主题，使用保存的主题
+    theme = savedTheme;
+  } else {
+    // 如果没有设置过，检测系统主题偏好
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    theme = prefersDark ? 'dark' : 'light';
+  }
+
+  // 设置主题
+  html.setAttribute('data-bs-theme', theme);
+
+  // 更新图标
+  if (theme === 'dark') {
+    themeIcon.textContent = '☀️';
+  } else {
+    themeIcon.textContent = '🌙';
+  }
+}
+
+function toggleTheme() {
+  const html = document.querySelector('html');
+  const currentTheme = html.getAttribute('data-bs-theme');
+  // 切换主题
+  const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+  html.setAttribute('data-bs-theme', newTheme);
+
+  // 更新图标
+  if (newTheme === 'dark') {
+    themeIcon.textContent = '☀️';
+  } else {
+    themeIcon.textContent = '🌙';
+  }
+
+  // 保存用户偏好到localStorage
+  localStorage.setItem('theme', newTheme);
+}
+
 listenInput();
+initTheme();

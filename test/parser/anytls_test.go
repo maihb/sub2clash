@@ -22,7 +22,7 @@ func TestAnytls_Basic_SimpleLink(t *testing.T) {
 		},
 	}
 
-	result, err := p.Parse(input)
+	result, err := p.Parse(parser.ParseConfig{UseUDP: false}, input)
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 		return
@@ -47,7 +47,7 @@ func TestAnytls_Basic_WithSNI(t *testing.T) {
 		},
 	}
 
-	result, err := p.Parse(input)
+	result, err := p.Parse(parser.ParseConfig{UseUDP: false}, input)
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 		return
@@ -72,7 +72,7 @@ func TestAnytls_Basic_WithInsecure(t *testing.T) {
 		},
 	}
 
-	result, err := p.Parse(input)
+	result, err := p.Parse(parser.ParseConfig{UseUDP: false}, input)
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 		return
@@ -96,7 +96,7 @@ func TestAnytls_Basic_IPv6Address(t *testing.T) {
 		},
 	}
 
-	result, err := p.Parse(input)
+	result, err := p.Parse(parser.ParseConfig{UseUDP: false}, input)
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 		return
@@ -121,7 +121,7 @@ func TestAnytls_Basic_ComplexPassword(t *testing.T) {
 		},
 	}
 
-	result, err := p.Parse(input)
+	result, err := p.Parse(parser.ParseConfig{UseUDP: false}, input)
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 		return
@@ -145,7 +145,7 @@ func TestAnytls_Basic_NoPassword(t *testing.T) {
 		},
 	}
 
-	result, err := p.Parse(input)
+	result, err := p.Parse(parser.ParseConfig{UseUDP: false}, input)
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 		return
@@ -169,7 +169,7 @@ func TestAnytls_Basic_UsernameOnly(t *testing.T) {
 		},
 	}
 
-	result, err := p.Parse(input)
+	result, err := p.Parse(parser.ParseConfig{UseUDP: false}, input)
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 		return
@@ -182,7 +182,7 @@ func TestAnytls_Error_MissingServer(t *testing.T) {
 	p := &parser.AnytlsParser{}
 	input := "anytls://password123@:8080"
 
-	_, err := p.Parse(input)
+	_, err := p.Parse(parser.ParseConfig{UseUDP: false}, input)
 	if err == nil {
 		t.Errorf("Expected error but got none")
 	}
@@ -192,7 +192,7 @@ func TestAnytls_Error_MissingPort(t *testing.T) {
 	p := &parser.AnytlsParser{}
 	input := "anytls://password123@127.0.0.1"
 
-	_, err := p.Parse(input)
+	_, err := p.Parse(parser.ParseConfig{UseUDP: false}, input)
 	if err == nil {
 		t.Errorf("Expected error but got none")
 	}
@@ -202,7 +202,7 @@ func TestAnytls_Error_InvalidPort(t *testing.T) {
 	p := &parser.AnytlsParser{}
 	input := "anytls://password123@127.0.0.1:99999"
 
-	_, err := p.Parse(input)
+	_, err := p.Parse(parser.ParseConfig{UseUDP: false}, input)
 	if err == nil {
 		t.Errorf("Expected error but got none")
 	}
@@ -212,7 +212,7 @@ func TestAnytls_Error_InvalidProtocol(t *testing.T) {
 	p := &parser.AnytlsParser{}
 	input := "anyssl://example.com:8080"
 
-	_, err := p.Parse(input)
+	_, err := p.Parse(parser.ParseConfig{UseUDP: false}, input)
 	if err == nil {
 		t.Errorf("Expected error but got none")
 	}

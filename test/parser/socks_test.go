@@ -22,7 +22,7 @@ func TestSocks_Basic_SimpleLink(t *testing.T) {
 		},
 	}
 
-	result, err := p.Parse(input)
+	result, err := p.Parse(parser.ParseConfig{UseUDP: false}, input)
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 		return
@@ -44,7 +44,7 @@ func TestSocks_Basic_NoAuth(t *testing.T) {
 		},
 	}
 
-	result, err := p.Parse(input)
+	result, err := p.Parse(parser.ParseConfig{UseUDP: false}, input)
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 		return
@@ -68,7 +68,7 @@ func TestSocks_Basic_IPv6Address(t *testing.T) {
 		},
 	}
 
-	result, err := p.Parse(input)
+	result, err := p.Parse(parser.ParseConfig{UseUDP: false}, input)
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 		return
@@ -93,7 +93,7 @@ func TestSocks_Basic_WithTLS(t *testing.T) {
 		},
 	}
 
-	result, err := p.Parse(input)
+	result, err := p.Parse(parser.ParseConfig{UseUDP: false}, input)
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 		return
@@ -118,7 +118,7 @@ func TestSocks_Basic_WithUDP(t *testing.T) {
 		},
 	}
 
-	result, err := p.Parse(input)
+	result, err := p.Parse(parser.ParseConfig{UseUDP: false}, input)
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 		return
@@ -131,7 +131,7 @@ func TestSocks_Error_MissingServer(t *testing.T) {
 	p := &parser.SocksParser{}
 	input := "socks://user:pass@:1080"
 
-	_, err := p.Parse(input)
+	_, err := p.Parse(parser.ParseConfig{UseUDP: false}, input)
 	if err == nil {
 		t.Errorf("Expected error but got none")
 	}
@@ -141,7 +141,7 @@ func TestSocks_Error_MissingPort(t *testing.T) {
 	p := &parser.SocksParser{}
 	input := "socks://user:pass@127.0.0.1"
 
-	_, err := p.Parse(input)
+	_, err := p.Parse(parser.ParseConfig{UseUDP: false}, input)
 	if err == nil {
 		t.Errorf("Expected error but got none")
 	}
@@ -151,7 +151,7 @@ func TestSocks_Error_InvalidPort(t *testing.T) {
 	p := &parser.SocksParser{}
 	input := "socks://user:pass@127.0.0.1:99999"
 
-	_, err := p.Parse(input)
+	_, err := p.Parse(parser.ParseConfig{UseUDP: false}, input)
 	if err == nil {
 		t.Errorf("Expected error but got none")
 	}
@@ -161,7 +161,7 @@ func TestSocks_Error_InvalidProtocol(t *testing.T) {
 	p := &parser.SocksParser{}
 	input := "ss://example.com:8080"
 
-	_, err := p.Parse(input)
+	_, err := p.Parse(parser.ParseConfig{UseUDP: false}, input)
 	if err == nil {
 		t.Errorf("Expected error but got none")
 	}

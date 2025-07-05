@@ -27,7 +27,7 @@ func (p *HysteriaParser) GetType() string {
 	return "hysteria"
 }
 
-func (p *HysteriaParser) Parse(proxy string) (P.Proxy, error) {
+func (p *HysteriaParser) Parse(config ParseConfig, proxy string) (P.Proxy, error) {
 	if !hasPrefix(proxy, p.GetPrefixes()) {
 		return P.Proxy{}, fmt.Errorf("%w: %s", ErrInvalidPrefix, proxy)
 	}

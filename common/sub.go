@@ -154,7 +154,7 @@ func BuildSub(clashType model.ClashType, query model.SubConfig, template string,
 				return nil, NewRegexInvalidError("prefix", err)
 			}
 			if reg.Match(data) {
-				p, err := parser.ParseProxies(strings.Split(string(data), "\n")...)
+				p, err := parser.ParseProxies(parser.ParseConfig{UseUDP: query.UseUDP}, strings.Split(string(data), "\n")...)
 				if err != nil {
 					return nil, err
 				}
@@ -169,7 +169,7 @@ func BuildSub(clashType model.ClashType, query model.SubConfig, template string,
 					)
 					return nil, NewSubscriptionParseError(err)
 				}
-				p, err := parser.ParseProxies(strings.Split(base64, "\n")...)
+				p, err := parser.ParseProxies(parser.ParseConfig{UseUDP: query.UseUDP}, strings.Split(base64, "\n")...)
 				if err != nil {
 					return nil, err
 				}
@@ -187,7 +187,7 @@ func BuildSub(clashType model.ClashType, query model.SubConfig, template string,
 	}
 
 	if len(query.Proxy) != 0 {
-		p, err := parser.ParseProxies(query.Proxies...)
+		p, err := parser.ParseProxies(parser.ParseConfig{UseUDP: query.UseUDP}, query.Proxies...)
 		if err != nil {
 			return nil, err
 		}
@@ -200,6 +200,7 @@ func BuildSub(clashType model.ClashType, query model.SubConfig, template string,
 		}
 	}
 
+	// 去重
 	proxies := make(map[string]*P.Proxy)
 	newProxies := make([]P.Proxy, 0, len(proxyList))
 	for i := range proxyList {
@@ -216,6 +217,7 @@ func BuildSub(clashType model.ClashType, query model.SubConfig, template string,
 	}
 	proxyList = newProxies
 
+	// 移除
 	if strings.TrimSpace(query.Remove) != "" {
 		newProxyList := make([]P.Proxy, 0, len(proxyList))
 		for i := range proxyList {
@@ -233,8 +235,8 @@ func BuildSub(clashType model.ClashType, query model.SubConfig, template string,
 		proxyList = newProxyList
 	}
 
+	// 替换
 	if len(query.ReplaceKeys) != 0 {
-
 		replaceRegs := make([]*regexp.Regexp, 0, len(query.ReplaceKeys))
 		for _, v := range query.ReplaceKeys {
 			replaceReg, err := regexp.Compile(v)
@@ -256,6 +258,7 @@ func BuildSub(clashType model.ClashType, query model.SubConfig, template string,
 		}
 	}
 
+	// 重命名有相同名称的节点
 	names := make(map[string]int)
 	for i := range proxyList {
 		if _, exist := names[proxyList[i].Name]; exist {

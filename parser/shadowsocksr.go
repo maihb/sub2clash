@@ -27,7 +27,7 @@ func (p *ShadowsocksRParser) GetType() string {
 	return "ssr"
 }
 
-func (p *ShadowsocksRParser) Parse(proxy string) (P.Proxy, error) {
+func (p *ShadowsocksRParser) Parse(config ParseConfig, proxy string) (P.Proxy, error) {
 	if !hasPrefix(proxy, p.GetPrefixes()) {
 		return P.Proxy{}, fmt.Errorf("%w: %s", ErrInvalidPrefix, proxy)
 	}
@@ -100,9 +100,9 @@ func (p *ShadowsocksRParser) Parse(proxy string) (P.Proxy, error) {
 			Password:      password,
 			ObfsParam:     obfsParam,
 			ProtocolParam: protoParam,
+			UDP:           config.UseUDP,
 		},
 	}
-
 	return result, nil
 }
 

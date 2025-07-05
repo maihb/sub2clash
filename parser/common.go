@@ -77,14 +77,18 @@ func DecodeBase64(s string) (string, error) {
 	return string(decodeStr), nil
 }
 
-func ParseProxies(proxies ...string) ([]P.Proxy, error) {
+type ParseConfig struct {
+	UseUDP bool
+}
+
+func ParseProxies(config ParseConfig, proxies ...string) ([]P.Proxy, error) {
 	var result []P.Proxy
 	for _, proxy := range proxies {
 		if proxy != "" {
 			var proxyItem P.Proxy
 			var err error
 
-			proxyItem, err = ParseProxyWithRegistry(proxy)
+			proxyItem, err = ParseProxyWithRegistry(config, proxy)
 			if err != nil {
 				return nil, err
 			}

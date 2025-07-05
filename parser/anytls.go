@@ -26,7 +26,7 @@ func (p *AnytlsParser) GetType() string {
 	return "anytls"
 }
 
-func (p *AnytlsParser) Parse(proxy string) (P.Proxy, error) {
+func (p *AnytlsParser) Parse(config ParseConfig, proxy string) (P.Proxy, error) {
 	if !hasPrefix(proxy, p.GetPrefixes()) {
 		return P.Proxy{}, fmt.Errorf("%w: %s", ErrInvalidPrefix, proxy)
 	}
@@ -72,6 +72,7 @@ func (p *AnytlsParser) Parse(proxy string) (P.Proxy, error) {
 			Password:       password,
 			SNI:            sni,
 			SkipCertVerify: insecureBool,
+			UDP:            config.UseUDP,
 		},
 	}
 	return result, nil

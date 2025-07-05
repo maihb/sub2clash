@@ -9,7 +9,7 @@ import (
 )
 
 type ProxyParser interface {
-	Parse(proxy string) (P.Proxy, error)
+	Parse(config ParseConfig, proxy string) (P.Proxy, error)
 	GetPrefixes() []string
 	GetType() string
 	SupportClash() bool
@@ -64,7 +64,7 @@ func GetAllPrefixes() []string {
 	return prefixes
 }
 
-func ParseProxyWithRegistry(proxy string) (P.Proxy, error) {
+func ParseProxyWithRegistry(config ParseConfig, proxy string) (P.Proxy, error) {
 	proxy = strings.TrimSpace(proxy)
 	if proxy == "" {
 		return P.Proxy{}, fmt.Errorf("%w: %s", ErrInvalidStruct, "empty proxy string")
@@ -72,7 +72,7 @@ func ParseProxyWithRegistry(proxy string) (P.Proxy, error) {
 
 	for prefix, parser := range registry.parsers {
 		if strings.HasPrefix(proxy, prefix) {
-			return parser.Parse(proxy)
+			return parser.Parse(config, proxy)
 		}
 	}
 

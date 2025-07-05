@@ -25,7 +25,7 @@ func TestHysteria_Basic_SimpleLink(t *testing.T) {
 		},
 	}
 
-	result, err := p.Parse(input)
+	result, err := p.Parse(parser.ParseConfig{UseUDP: false}, input)
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 		return
@@ -52,7 +52,7 @@ func TestHysteria_Basic_WithAuthString(t *testing.T) {
 		},
 	}
 
-	result, err := p.Parse(input)
+	result, err := p.Parse(parser.ParseConfig{UseUDP: false}, input)
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 		return
@@ -80,7 +80,7 @@ func TestHysteria_Basic_WithObfs(t *testing.T) {
 		},
 	}
 
-	result, err := p.Parse(input)
+	result, err := p.Parse(parser.ParseConfig{UseUDP: false}, input)
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 		return
@@ -106,7 +106,7 @@ func TestHysteria_Basic_IPv6Address(t *testing.T) {
 		},
 	}
 
-	result, err := p.Parse(input)
+	result, err := p.Parse(parser.ParseConfig{UseUDP: false}, input)
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 		return
@@ -133,7 +133,7 @@ func TestHysteria_Basic_MultiALPN(t *testing.T) {
 		},
 	}
 
-	result, err := p.Parse(input)
+	result, err := p.Parse(parser.ParseConfig{UseUDP: false}, input)
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 		return
@@ -146,7 +146,7 @@ func TestHysteria_Error_MissingServer(t *testing.T) {
 	p := &parser.HysteriaParser{}
 	input := "hysteria://:8080?auth=password123"
 
-	_, err := p.Parse(input)
+	_, err := p.Parse(parser.ParseConfig{UseUDP: false}, input)
 	if err == nil {
 		t.Errorf("Expected error but got none")
 	}
@@ -156,7 +156,7 @@ func TestHysteria_Error_MissingPort(t *testing.T) {
 	p := &parser.HysteriaParser{}
 	input := "hysteria://127.0.0.1?auth=password123"
 
-	_, err := p.Parse(input)
+	_, err := p.Parse(parser.ParseConfig{UseUDP: false}, input)
 	if err == nil {
 		t.Errorf("Expected error but got none")
 	}
@@ -166,7 +166,7 @@ func TestHysteria_Error_InvalidPort(t *testing.T) {
 	p := &parser.HysteriaParser{}
 	input := "hysteria://127.0.0.1:99999?auth=password123"
 
-	_, err := p.Parse(input)
+	_, err := p.Parse(parser.ParseConfig{UseUDP: false}, input)
 	if err == nil {
 		t.Errorf("Expected error but got none")
 	}
@@ -176,7 +176,7 @@ func TestHysteria_Error_InvalidProtocol(t *testing.T) {
 	p := &parser.HysteriaParser{}
 	input := "hysteria2://example.com:8080"
 
-	_, err := p.Parse(input)
+	_, err := p.Parse(parser.ParseConfig{UseUDP: false}, input)
 	if err == nil {
 		t.Errorf("Expected error but got none")
 	}

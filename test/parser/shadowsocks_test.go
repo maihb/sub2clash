@@ -23,7 +23,7 @@ func TestShadowsocks_Basic_SimpleLink(t *testing.T) {
 		},
 	}
 
-	result, err := p.Parse(input)
+	result, err := p.Parse(parser.ParseConfig{UseUDP: false}, input)
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 		return
@@ -47,7 +47,7 @@ func TestShadowsocks_Basic_IPv6Address(t *testing.T) {
 		},
 	}
 
-	result, err := p.Parse(input)
+	result, err := p.Parse(parser.ParseConfig{UseUDP: false}, input)
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 		return
@@ -71,7 +71,7 @@ func TestShadowsocks_Basic_WithRemark(t *testing.T) {
 		},
 	}
 
-	result, err := p.Parse(input)
+	result, err := p.Parse(parser.ParseConfig{UseUDP: false}, input)
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 		return
@@ -95,7 +95,7 @@ func TestShadowsocks_Advanced_Base64FullEncoded(t *testing.T) {
 		},
 	}
 
-	result, err := p.Parse(input)
+	result, err := p.Parse(parser.ParseConfig{UseUDP: false}, input)
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 		return
@@ -119,7 +119,7 @@ func TestShadowsocks_Advanced_PlainUserPassword(t *testing.T) {
 		},
 	}
 
-	result, err := p.Parse(input)
+	result, err := p.Parse(parser.ParseConfig{UseUDP: false}, input)
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 		return
@@ -143,7 +143,7 @@ func TestShadowsocks_Advanced_ChaCha20Cipher(t *testing.T) {
 		},
 	}
 
-	result, err := p.Parse(input)
+	result, err := p.Parse(parser.ParseConfig{UseUDP: false}, input)
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 		return
@@ -157,7 +157,7 @@ func TestShadowsocks_Error_MissingServer(t *testing.T) {
 	p := &parser.ShadowsocksParser{}
 	input := "ss://YWVzLTI1Ni1nY206cGFzc3dvcmQ=@:8080"
 
-	_, err := p.Parse(input)
+	_, err := p.Parse(parser.ParseConfig{UseUDP: false}, input)
 	if !errors.Is(err, parser.ErrInvalidStruct) {
 		t.Errorf("Error is not expected: %v", err)
 	}
@@ -167,7 +167,7 @@ func TestShadowsocks_Error_MissingPort(t *testing.T) {
 	p := &parser.ShadowsocksParser{}
 	input := "ss://YWVzLTI1Ni1nY206cGFzc3dvcmQ=@127.0.0.1"
 
-	_, err := p.Parse(input)
+	_, err := p.Parse(parser.ParseConfig{UseUDP: false}, input)
 	if !errors.Is(err, parser.ErrInvalidStruct) {
 		t.Errorf("Error is not expected: %v", err)
 	}
@@ -177,7 +177,7 @@ func TestShadowsocks_Error_InvalidProtocol(t *testing.T) {
 	p := &parser.ShadowsocksParser{}
 	input := "http://example.com:8080"
 
-	_, err := p.Parse(input)
+	_, err := p.Parse(parser.ParseConfig{UseUDP: false}, input)
 	if !errors.Is(err, parser.ErrInvalidPrefix) {
 		t.Errorf("Error is not expected: %v", err)
 	}

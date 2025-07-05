@@ -6,3 +6,6 @@ logs
 data
 .env
 .vscode/settings.json
+config.yaml
+config.yml
+config.json

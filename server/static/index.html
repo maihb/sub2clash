@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN" data-bs-theme="light">
 
 <head>
     <meta charset="UTF-8" />
@@ -28,10 +28,38 @@
             height: 25px;
             width: 25px;
         }
+
+        /* 主题切换按钮样式 */
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
     </style>
 </head>
 
-<body class="bg-light">
+<body>
+    <!-- 主题切换按钮 -->
+    <button class="theme-toggle btn btn-outline-secondary" onclick="toggleTheme()" title="切换深色/浅色模式">
+        <span id="theme-icon">🌙</span>
+    </button>
+
     <div class="container mt-5">
         <div class="mb-4">
             <h2>sub2clash</h2>
@@ -104,6 +132,11 @@
             <input class="form-check-input" id="igcg" name="igcg" type="checkbox" />
             <label class="form-check-label" for="igcg">不输出国家策略组</label>
         </div>
+        <!-- Use UDP -->
+        <div class="form-check mb-3">
+            <input class="form-check-input" id="useUDP" name="useUDP" type="checkbox" />
+            <label class="form-check-label" for="useUDP">使用 UDP</label>
+        </div>
         <!-- Rule Provider -->
         <div class="form-group mb-3" id="ruleProviderGroup">
             <label>Rule Provider:</label>
@@ -145,7 +178,7 @@
         <div class="form-group mb-5">
             <label for="apiLink">配置链接:</label>
             <div class="input-group mb-2">
-                <input class="form-control bg-light" id="apiLink" type="text" placeholder="链接" readonly
+                <input class="form-control" id="apiLink" type="text" placeholder="链接" readonly
                     style="cursor: not-allowed;" />
                 <button class="btn btn-primary" onclick="copyToClipboard('apiLink',this)" type="button">
                     复制链接
@@ -162,7 +195,7 @@
                 </button>
             </div>
             <div class="input-group">
-                <input class="form-control bg-light" id="apiShortLink" type="text" placeholder="短链接" readonly
+                <input class="form-control" id="apiShortLink" type="text" placeholder="短链接" readonly
                     style="cursor: not-allowed;" />
                 <button class="btn btn-primary" onclick="updateShortLink()" type="button">
                     更新短链

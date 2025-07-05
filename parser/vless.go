@@ -26,7 +26,7 @@ func (p *VlessParser) GetType() string {
 	return "vless"
 }
 
-func (p *VlessParser) Parse(proxy string) (P.Proxy, error) {
+func (p *VlessParser) Parse(config ParseConfig, proxy string) (P.Proxy, error) {
 	if !hasPrefix(proxy, p.GetPrefixes()) {
 		return P.Proxy{}, fmt.Errorf("%w: %s", ErrInvalidPrefix, proxy)
 	}

@@ -30,7 +30,7 @@ func (p *ShadowsocksParser) GetType() string {
 }
 
 // Parse 解析Shadowsocks代理
-func (p *ShadowsocksParser) Parse(proxy string) (P.Proxy, error) {
+func (p *ShadowsocksParser) Parse(config ParseConfig, proxy string) (P.Proxy, error) {
 	if !hasPrefix(proxy, p.GetPrefixes()) {
 		return P.Proxy{}, fmt.Errorf("%w: %s", ErrInvalidPrefix, proxy)
 	}
@@ -108,9 +108,9 @@ func (p *ShadowsocksParser) Parse(proxy string) (P.Proxy, error) {
 			Password: password,
 			Server:   server,
 			Port:     port,
+			UDP:      config.UseUDP,
 		},
 	}
-
 	return result, nil
 }
 

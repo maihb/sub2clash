@@ -25,7 +25,7 @@ func (p *SocksParser) GetType() string {
 	return "socks5"
 }
 
-func (p *SocksParser) Parse(proxy string) (P.Proxy, error) {
+func (p *SocksParser) Parse(config ParseConfig, proxy string) (P.Proxy, error) {
 	if !hasPrefix(proxy, p.GetPrefixes()) {
 		return P.Proxy{}, fmt.Errorf("%w: %s", ErrInvalidPrefix, proxy)
 	}
