@@ -1,6 +1,6 @@
 package model
 
-import "github.com/bestnite/sub2clash/parser"
+import "github.com/maihb/sub2clash/parser"
 
 type ClashType int
 

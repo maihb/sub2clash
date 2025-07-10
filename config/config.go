@@ -66,8 +66,8 @@ func LoadConfig() error {
 
 func setDefaults(v *viper.Viper) {
 	v.SetDefault("address", "0.0.0.0:8011")
-	v.SetDefault("meta_template", "https://raw.githubusercontent.com/bestnite/sub2clash/refs/heads/main/templates/template_meta.yaml")
-	v.SetDefault("clash_template", "https://raw.githubusercontent.com/bestnite/sub2clash/refs/heads/main/templates/template_clash.yaml")
+	v.SetDefault("meta_template", "https://raw.githubusercontent.com/maihb/sub2clash/refs/heads/main/templates/template_meta.yaml")
+	v.SetDefault("clash_template", "https://raw.githubusercontent.com/maihb/sub2clash/refs/heads/main/templates/template_clash.yaml")
 	v.SetDefault("request_retry_times", 3)
 	v.SetDefault("request_max_file_size", 1024*1024*1)
 	v.SetDefault("cache_expire", 60*5)

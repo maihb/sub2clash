@@ -4,11 +4,11 @@ import (
 	_ "embed"
 	"io"
 
-	"github.com/bestnite/sub2clash/common"
-	"github.com/bestnite/sub2clash/common/database"
-	"github.com/bestnite/sub2clash/config"
-	"github.com/bestnite/sub2clash/logger"
-	"github.com/bestnite/sub2clash/server"
+	"github.com/maihb/sub2clash/common"
+	"github.com/maihb/sub2clash/common/database"
+	"github.com/maihb/sub2clash/config"
+	"github.com/maihb/sub2clash/logger"
+	"github.com/maihb/sub2clash/server"
 
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"

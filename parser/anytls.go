@@ -5,7 +5,7 @@ import (
 	"net/url"
 	"strings"
 
-	P "github.com/bestnite/sub2clash/model/proxy"
+	P "github.com/maihb/sub2clash/model/proxy"
 )
 
 type AnytlsParser struct{}

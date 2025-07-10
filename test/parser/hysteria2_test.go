@@ -3,8 +3,8 @@ package test
 import (
 	"testing"
 
-	"github.com/bestnite/sub2clash/model/proxy"
-	"github.com/bestnite/sub2clash/parser"
+	"github.com/maihb/sub2clash/model/proxy"
+	"github.com/maihb/sub2clash/parser"
 )
 
 func TestHysteria2_Basic_SimpleLink(t *testing.T) {

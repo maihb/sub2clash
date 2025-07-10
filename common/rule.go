@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/bestnite/sub2clash/model"
+	"github.com/maihb/sub2clash/model"
 )
 
 func PrependRuleProvider(

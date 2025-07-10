@@ -15,10 +15,10 @@ import (
 	"sync"
 	"time"
 
-	"github.com/bestnite/sub2clash/logger"
-	"github.com/bestnite/sub2clash/model"
-	P "github.com/bestnite/sub2clash/model/proxy"
-	"github.com/bestnite/sub2clash/parser"
+	"github.com/maihb/sub2clash/logger"
+	"github.com/maihb/sub2clash/model"
+	P "github.com/maihb/sub2clash/model/proxy"
+	"github.com/maihb/sub2clash/parser"
 	"go.uber.org/zap"
 	"gopkg.in/yaml.v3"
 )

@@ -1,4 +1,4 @@
-module github.com/bestnite/sub2clash
+module github.com/maihb/sub2clash
 
 go 1.21.0
 

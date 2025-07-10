@@ -3,8 +3,8 @@ package common
 import (
 	"strings"
 
-	"github.com/bestnite/sub2clash/model"
-	"github.com/bestnite/sub2clash/model/proxy"
+	"github.com/maihb/sub2clash/model"
+	"github.com/maihb/sub2clash/model/proxy"
 )
 
 func GetContryName(countryKey string) string {

@@ -3,7 +3,7 @@ package model
 import (
 	"net/netip"
 
-	"github.com/bestnite/sub2clash/model/proxy"
+	"github.com/maihb/sub2clash/model/proxy"
 	C "github.com/metacubex/mihomo/config"
 	LC "github.com/metacubex/mihomo/listener/config"
 )

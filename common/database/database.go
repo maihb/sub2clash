@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"path/filepath"
 
-	"github.com/bestnite/sub2clash/common"
-	"github.com/bestnite/sub2clash/model"
+	"github.com/maihb/sub2clash/common"
+	"github.com/maihb/sub2clash/model"
 
 	"go.etcd.io/bbolt"
 )

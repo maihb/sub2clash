@@ -6,11 +6,11 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/bestnite/sub2clash/config"
-	"github.com/bestnite/sub2clash/constant"
-	"github.com/bestnite/sub2clash/model"
-	"github.com/bestnite/sub2clash/server/handler"
-	"github.com/bestnite/sub2clash/server/middleware"
+	"github.com/maihb/sub2clash/config"
+	"github.com/maihb/sub2clash/constant"
+	"github.com/maihb/sub2clash/model"
+	"github.com/maihb/sub2clash/server/handler"
+	"github.com/maihb/sub2clash/server/middleware"
 
 	"github.com/gin-gonic/gin"
 )

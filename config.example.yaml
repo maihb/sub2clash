@@ -5,8 +5,8 @@
 address: "0.0.0.0:8011"
 
 # 模板配置
-meta_template: "https://raw.githubusercontent.com/bestnite/sub2clash/refs/heads/main/templates/template_meta.yaml"
-clash_template: "https://raw.githubusercontent.com/bestnite/sub2clash/refs/heads/main/templates/template_clash.yaml"
+meta_template: "https://raw.githubusercontent.com/maihb/sub2clash/refs/heads/main/templates/template_meta.yaml"
+clash_template: "https://raw.githubusercontent.com/maihb/sub2clash/refs/heads/main/templates/template_clash.yaml"
 
 # 请求配置
 request_retry_times: 3

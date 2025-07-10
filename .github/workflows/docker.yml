@@ -18,7 +18,7 @@ jobs:
         with:
           images: |
             nite07/sub2clash
-            ghcr.io/bestnite/sub2clash
+            ghcr.io/maihb/sub2clash
           tags: |
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}

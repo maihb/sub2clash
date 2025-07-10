@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/bestnite/sub2clash/model/proxy"
+	"github.com/maihb/sub2clash/model/proxy"
 	"gopkg.in/yaml.v3"
 )
 

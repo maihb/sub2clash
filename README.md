@@ -25,7 +25,7 @@
 ### 部署
 
 - [docker compose](./compose.yml)
-- 运行[二进制文件](https://github.com/bestnite/sub2clash/releases/latest)
+- 运行[二进制文件](https://github.com/maihb/sub2clash/releases/latest)
 
 ### 配置
 
@@ -39,16 +39,16 @@
 2. **环境变量**：使用 `SUB2CLASH_` 前缀，例如 `SUB2CLASH_ADDRESS=0.0.0.0:8011`
 3. **默认值**：内置默认配置
 
-| 配置项                | 环境变量                        | 说明                                    | 默认值                                                                                               |
-| --------------------- | ------------------------------- | --------------------------------------- | ---------------------------------------------------------------------------------------------------- |
-| address               | SUB2CLASH_ADDRESS               | 服务监听地址                            | `0.0.0.0:8011`                                                                                       |
-| meta_template         | SUB2CLASH_META_TEMPLATE         | 默认 meta 模板 URL                      | `https://raw.githubusercontent.com/bestnite/sub2clash/refs/heads/main/templates/template_meta.yaml`  |
-| clash_template        | SUB2CLASH_CLASH_TEMPLATE        | 默认 clash 模板 URL                     | `https://raw.githubusercontent.com/bestnite/sub2clash/refs/heads/main/templates/template_clash.yaml` |
-| request_retry_times   | SUB2CLASH_REQUEST_RETRY_TIMES   | 请求重试次数                            | `3`                                                                                                  |
-| request_max_file_size | SUB2CLASH_REQUEST_MAX_FILE_SIZE | 请求文件最大大小（byte）                | `1048576`                                                                                            |
-| cache_expire          | SUB2CLASH_CACHE_EXPIRE          | 订阅缓存时间（秒）                      | `300`                                                                                                |
-| log_level             | SUB2CLASH_LOG_LEVEL             | 日志等级：`debug`,`info`,`warn`,`error` | `info`                                                                                               |
-| short_link_length     | SUB2CLASH_SHORT_LINK_LENGTH     | 短链长度                                | `6`                                                                                                  |
+| 配置项                | 环境变量                        | 说明                                    | 默认值                                                                                            |
+| --------------------- | ------------------------------- | --------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| address               | SUB2CLASH_ADDRESS               | 服务监听地址                            | `0.0.0.0:8011`                                                                                    |
+| meta_template         | SUB2CLASH_META_TEMPLATE         | 默认 meta 模板 URL                      | `https://raw.githubusercontent.com/maihb/sub2clash/refs/heads/main/templates/template_meta.yaml`  |
+| clash_template        | SUB2CLASH_CLASH_TEMPLATE        | 默认 clash 模板 URL                     | `https://raw.githubusercontent.com/maihb/sub2clash/refs/heads/main/templates/template_clash.yaml` |
+| request_retry_times   | SUB2CLASH_REQUEST_RETRY_TIMES   | 请求重试次数                            | `3`                                                                                               |
+| request_max_file_size | SUB2CLASH_REQUEST_MAX_FILE_SIZE | 请求文件最大大小（byte）                | `1048576`                                                                                         |
+| cache_expire          | SUB2CLASH_CACHE_EXPIRE          | 订阅缓存时间（秒）                      | `300`                                                                                             |
+| log_level             | SUB2CLASH_LOG_LEVEL             | 日志等级：`debug`,`info`,`warn`,`error` | `info`                                                                                            |
+| short_link_length     | SUB2CLASH_SHORT_LINK_LENGTH     | 短链长度                                | `6`                                                                                               |
 
 #### 配置文件示例
 
@@ -86,4 +86,4 @@
 
 ## 贡献者
 
-[![](https://contrib.rocks/image?repo=bestnite/sub2clash)](https://github.com/bestnite/sub2clash/graphs/contributors)
+[![](https://contrib.rocks/image?repo=maihb/sub2clash)](https://github.com/maihb/sub2clash/graphs/contributors)

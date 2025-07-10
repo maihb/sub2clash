@@ -4,9 +4,9 @@ import (
 	_ "embed"
 	"net/http"
 
-	"github.com/bestnite/sub2clash/common"
-	"github.com/bestnite/sub2clash/config"
-	M "github.com/bestnite/sub2clash/model"
+	"github.com/maihb/sub2clash/common"
+	"github.com/maihb/sub2clash/config"
+	M "github.com/maihb/sub2clash/model"
 
 	"github.com/gin-gonic/gin"
 	"gopkg.in/yaml.v3"

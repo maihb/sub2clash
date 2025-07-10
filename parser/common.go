@@ -7,7 +7,7 @@ import (
 	"strings"
 	"unicode/utf8"
 
-	P "github.com/bestnite/sub2clash/model/proxy"
+	P "github.com/maihb/sub2clash/model/proxy"
 )
 
 func hasPrefix(proxy string, prefixes []string) bool {

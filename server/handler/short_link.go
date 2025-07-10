@@ -6,10 +6,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/bestnite/sub2clash/common"
-	"github.com/bestnite/sub2clash/common/database"
-	"github.com/bestnite/sub2clash/config"
-	"github.com/bestnite/sub2clash/model"
+	"github.com/maihb/sub2clash/common"
+	"github.com/maihb/sub2clash/common/database"
+	"github.com/maihb/sub2clash/config"
+	"github.com/maihb/sub2clash/model"
 
 	"github.com/gin-gonic/gin"
 )
